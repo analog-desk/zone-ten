@@ -1,6 +1,6 @@
 // Vaaro Light Meter service worker: the app opens and meters offline after the first visit.
 // The production build is a single self-contained index.html, so the shell is a handful of files.
-const VERSION = 'zone-ten-v1';
+const VERSION = 'zone-ten-v2';
 const SHELL = ['./', './index.html', './manifest.webmanifest', './icon.svg', './icon-192.png', './icon-512.png', './apple-touch-icon.png'];
 
 self.addEventListener('install', (event) => {
