@@ -25,7 +25,7 @@ function loadImage(url: string): Promise<HTMLImageElement> {
   return new Promise((resolve, reject) => {
     const img = new Image();
     img.onload = () => resolve(img);
-    img.onerror = () => reject(new PhotoMeterError("This browser can't decode the photo. Try JPEG (on iPhone: Settings → Camera → Formats → Most Compatible)."));
+    img.onerror = () => reject(new PhotoMeterError("This browser can't decode the photo (HEIC needs Safari on iOS 17 or later). Try a JPEG: iPhone Settings → Camera → Formats → Most Compatible."));
     img.src = url;
   });
 }
@@ -47,8 +47,13 @@ export async function measurePhoto(file: Blob): Promise<PhotoFrame> {
   const fNumber = num(tags?.FNumber);
   const iso = num(tags?.ISO) ?? num(tags?.ISOSpeedRatings) ?? num(tags?.PhotographicSensitivity);
   if (!seconds || !fNumber || !iso) {
+    const missing = [!seconds && 'shutter time', !fNumber && 'aperture', !iso && 'ISO'].filter(Boolean).join(', ');
+    const anyTags = !!tags && Object.keys(tags).length > 0;
     throw new PhotoMeterError(
-      'This photo has no exposure data (shutter, aperture and ISO), so it cannot be measured. Take the photo with the Measure button, or pick an original camera photo — screenshots and edited or messaged images usually lose it.',
+      isIOS()
+        ? `iPhone removed the camera data (${missing}) when handing the photo to the browser, so it can't be measured. ` +
+          'Use the original file instead: take the photo in the Camera app → Photos → Share → Save to Files, then tap "From Files" here and pick it under Browse.'
+        : `This photo has no ${missing} in its metadata${anyTags ? '' : ' (no camera data at all)'}, so it can't be measured. Use an original camera photo — screenshots and edited or messaged images lose it.`,
     );
   }
 
@@ -91,6 +96,10 @@ export async function measurePhoto(file: Blob): Promise<PhotoFrame> {
   } finally {
     URL.revokeObjectURL(url);
   }
+}
+
+export function isIOS(): boolean {
+  return /iPhone|iPad|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
 }
 
 export async function dataURLToBlob(url: string): Promise<Blob> {

@@ -59,7 +59,7 @@ import { GoalGrid } from '../components/pickers';
 import { RollManager } from '../components/RollSheet';
 import { Button, Card, ErrorBadge, Label, Notice, Row, Segmented, Sheet, Stepper, cx, inputClass, vibrate } from '../components/ui';
 import { LiveMeter, type LiveCapability, type LiveFrame } from '../lib/liveMeter';
-import { measurePhoto, PhotoMeterError, type PhotoFrame } from '../lib/photoMeter';
+import { isIOS, measurePhoto, PhotoMeterError, type PhotoFrame } from '../lib/photoMeter';
 import { confirmGoal, saveReading, setActiveCamera, setGoal, setMeterState, setWorkingEI } from '../state/actions';
 import { useShooting } from '../state/hooks';
 import { publishFrame, publishRaw } from '../state/measurement';
@@ -334,7 +334,11 @@ export function Meter({ goTo }: { goTo: (tab: 'profiles' | 'sessions') => void }
         {!viewerImage && source === 'photo' && (
           <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 p-6 text-center">
             <Camera size={40} className="text-accent" />
-            <p className="text-sm text-muted">Tap Measure to take a metering photo. Zone Ten reads its exposure data and pixels, then you can tap the picture to spot meter any area.</p>
+            <p className="text-sm text-muted">
+              {isIOS()
+                ? 'On iPhone: take the photo with the Camera app, then Photos → Share → Save to Files, and tap “From Files / library” below → Browse. Safari strips the camera data from photos taken or picked inside the browser.'
+                : 'Tap Measure to take a metering photo. Zone Ten reads its exposure data and pixels, then you can tap the picture to spot meter any area.'}
+            </p>
           </div>
         )}
         <div className="absolute inset-0" onPointerUp={tap} role="button" aria-label="Tap to meter this area">
@@ -377,11 +381,11 @@ export function Meter({ goTo }: { goTo: (tab: 'profiles' | 'sessions') => void }
           <Save size={18} /> Save
         </Button>
         <input ref={cameraInput} type="file" accept="image/*" capture="environment" hidden onChange={(e) => onPhoto(e.target.files?.[0])} />
-        <input ref={libraryInput} type="file" accept="image/jpeg,image/*" hidden onChange={(e) => onPhoto(e.target.files?.[0])} />
+        <input ref={libraryInput} type="file" accept="image/*,.heic,.heif,.jpg,.jpeg" hidden onChange={(e) => onPhoto(e.target.files?.[0])} />
       </div>
       <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted">
         <button type="button" className="flex items-center gap-1 underline" onClick={() => libraryInput.current?.click()}>
-          <ImageIcon size={13} /> Meter a photo from library
+          <ImageIcon size={13} /> From Files / library
         </button>
         {source === 'live' && (
           <button type="button" className="flex items-center gap-1 underline" onClick={() => setSource('photo')}>
