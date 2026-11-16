@@ -14,6 +14,11 @@ export interface PhotoFrame {
 
 export class PhotoMeterError extends Error {}
 
+/** What a picked/pasted file contained — shown to the user so failures explain themselves. */
+export let lastDiagnostic = '';
+
+const kb = (n: number) => (n > 1e6 ? `${(n / 1e6).toFixed(1)} MB` : `${Math.round(n / 1e3)} KB`);
+
 const GRID_W = 64;
 
 function num(v: unknown): number | undefined {
@@ -44,15 +49,17 @@ export async function measurePhoto(file: Blob): Promise<PhotoFrame> {
     tags = undefined;
   }
   const seconds = num(tags?.ExposureTime);
+  const found = (k: string, v: unknown) => `${k} ${v === undefined ? '✗' : '✓'}`;
   const fNumber = num(tags?.FNumber);
   const iso = num(tags?.ISO) ?? num(tags?.ISOSpeedRatings) ?? num(tags?.PhotographicSensitivity);
+  lastDiagnostic = `${file.type || 'unknown type'}, ${kb(file.size)} · ${found('shutter', seconds)} ${found('aperture', fNumber)} ${found('ISO', iso)}${tags?.Model ? ` · ${String(tags.Make ?? '')} ${String(tags.Model)}` : ''}`;
   if (!seconds || !fNumber || !iso) {
     const missing = [!seconds && 'shutter time', !fNumber && 'aperture', !iso && 'ISO'].filter(Boolean).join(', ');
     const anyTags = !!tags && Object.keys(tags).length > 0;
     throw new PhotoMeterError(
       isIOS()
         ? `iPhone removed the camera data (${missing}) when handing the photo to the browser, so it can't be measured. ` +
-          'Use the original file instead: take the photo in the Camera app → Photos → Share → Save to Files, then tap "From Files" here and pick it under Browse.'
+          'Use the Zone Ten shortcut (Settings → iPhone setup) and tap Paste, or save the photo to Files and pick it with \"From Files\".'
         : `This photo has no ${missing} in its metadata${anyTags ? '' : ' (no camera data at all)'}, so it can't be measured. Use an original camera photo — screenshots and edited or messaged images lose it.`,
     );
   }
@@ -96,6 +103,22 @@ export async function measurePhoto(file: Blob): Promise<PhotoFrame> {
   } finally {
     URL.revokeObjectURL(url);
   }
+}
+
+/** Decodes a photo file that an iOS Shortcut copied to the clipboard as Base64 text. */
+export function blobFromBase64(text: string): Blob {
+  const clean = text.replace(/^data:[^,]*,/, '').replace(/[^A-Za-z0-9+/=]/g, '');
+  if (clean.length < 1000) throw new PhotoMeterError('The clipboard has no photo. Run the Zone Ten shortcut first (Settings → iPhone setup), then tap Paste.');
+  let bin: string;
+  try {
+    bin = atob(clean);
+  } catch {
+    throw new PhotoMeterError('The clipboard text is not a Base64 photo. Run the Zone Ten shortcut again.');
+  }
+  const bytes = new Uint8Array(bin.length);
+  for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+  const isHeif = bin.slice(4, 8) === 'ftyp';
+  return new Blob([bytes], { type: isHeif ? 'image/heic' : 'image/jpeg' });
 }
 
 export function isIOS(): boolean {

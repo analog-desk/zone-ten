@@ -59,7 +59,7 @@ import { GoalGrid } from '../components/pickers';
 import { RollManager } from '../components/RollSheet';
 import { Button, Card, ErrorBadge, Label, Notice, Row, Segmented, Sheet, Stepper, cx, inputClass, vibrate } from '../components/ui';
 import { LiveMeter, type LiveCapability, type LiveFrame } from '../lib/liveMeter';
-import { isIOS, measurePhoto, PhotoMeterError, type PhotoFrame } from '../lib/photoMeter';
+import { blobFromBase64, isIOS, lastDiagnostic, measurePhoto, PhotoMeterError, type PhotoFrame } from '../lib/photoMeter';
 import { confirmGoal, saveReading, setActiveCamera, setGoal, setMeterState, setWorkingEI } from '../state/actions';
 import { useShooting } from '../state/hooks';
 import { publishFrame, publishRaw } from '../state/measurement';
@@ -220,7 +220,7 @@ export function Meter({ goTo }: { goTo: (tab: 'profiles' | 'sessions') => void }
   const toggleLock = (p: Param) => setMeterState(camera.id, { ...shown, locks: { ...shown.locks, [p]: !shown.locks[p] } });
   const setMode = (m: (typeof SELECTABLE_MODES)[number]) => setMeterState(camera.id, { ...shown, locks: locksFor(m) });
 
-  async function onPhoto(file: File | undefined) {
+  async function onPhoto(file: Blob | undefined) {
     if (!file) return;
     setBusy(true);
     setMessage(null);
@@ -229,16 +229,28 @@ export function Meter({ goTo }: { goTo: (tab: 'profiles' | 'sessions') => void }
       setPhoto(p);
       setFrozen(null);
       setSource('photo');
+      setMessage({ tone: 'info', text: `Photo check: ${lastDiagnostic}` });
       if (!prefs.phoneFNumber)
         update((d) => {
           d.prefs.phoneFNumber = p.capture.fNumber;
         });
     } catch (e) {
-      setMessage({ tone: 'bad', text: e instanceof PhotoMeterError ? e.message : `Could not read the photo: ${(e as Error).message}` });
+      const why = e instanceof PhotoMeterError ? e.message : `Could not read the photo: ${(e as Error).message}`;
+      setMessage({ tone: 'bad', text: lastDiagnostic ? `${why}\n\nPhoto check: ${lastDiagnostic}` : why });
     } finally {
       setBusy(false);
       if (cameraInput.current) cameraInput.current.value = '';
       if (libraryInput.current) libraryInput.current.value = '';
+    }
+  }
+
+  async function pasteFromShortcut() {
+    setMessage(null);
+    try {
+      const text = await navigator.clipboard.readText();
+      await onPhoto(blobFromBase64(text));
+    } catch (e) {
+      setMessage({ tone: 'bad', text: e instanceof PhotoMeterError ? e.message : 'Could not read the clipboard. Tap Paste again and choose “Paste” when iPhone asks.' });
     }
   }
 
@@ -336,7 +348,7 @@ export function Meter({ goTo }: { goTo: (tab: 'profiles' | 'sessions') => void }
             <Camera size={40} className="text-accent" />
             <p className="text-sm text-muted">
               {isIOS()
-                ? 'On iPhone: take the photo with the Camera app, then Photos → Share → Save to Files, and tap “From Files / library” below → Browse. Safari strips the camera data from photos taken or picked inside the browser.'
+                ? 'On iPhone: take the photo with the Camera app, run the Zone Ten shortcut, then tap “Paste from shortcut”. (Safari strips the camera data from photos taken inside the browser.) Setup: Settings → iPhone setup.'
                 : 'Tap Measure to take a metering photo. Zone Ten reads its exposure data and pixels, then you can tap the picture to spot meter any area.'}
             </p>
           </div>
@@ -384,6 +396,9 @@ export function Meter({ goTo }: { goTo: (tab: 'profiles' | 'sessions') => void }
         <input ref={libraryInput} type="file" accept="image/*,.heic,.heif,.jpg,.jpeg" hidden onChange={(e) => onPhoto(e.target.files?.[0])} />
       </div>
       <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted">
+        <button type="button" className="flex items-center gap-1 font-semibold text-accent underline" onClick={pasteFromShortcut}>
+          Paste from shortcut
+        </button>
         <button type="button" className="flex items-center gap-1 underline" onClick={() => libraryInput.current?.click()}>
           <ImageIcon size={13} /> From Files / library
         </button>
@@ -399,7 +414,7 @@ export function Meter({ goTo }: { goTo: (tab: 'profiles' | 'sessions') => void }
       {message && (
         <Notice tone={message.tone}>
           <div className="flex gap-2">
-            <span className="mr-auto">{message.text}</span>
+            <span className="mr-auto whitespace-pre-line">{message.text}</span>
             <button type="button" onClick={() => setMessage(null)} aria-label="Dismiss">
               <X size={14} />
             </button>

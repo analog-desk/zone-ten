@@ -27,7 +27,7 @@ import { catalogOf, getDoc, replaceDoc, uid, update, useDoc, type DBDoc } from '
 export function Settings({ onClose }: { onClose: () => void }) {
   const doc = useDoc((d) => d);
   const p = doc.prefs;
-  const [panel, setPanel] = useState<null | 'calibration' | 'catalog' | 'guide' | 'accuracy'>(null);
+  const [panel, setPanel] = useState<null | 'calibration' | 'catalog' | 'guide' | 'accuracy' | 'iphone'>(null);
   const setPref = <K extends keyof DBDoc['prefs']>(k: K, v: DBDoc['prefs'][K]) =>
     update((d) => {
       d.prefs[k] = v;
@@ -60,6 +60,7 @@ export function Settings({ onClose }: { onClose: () => void }) {
 
       <section>
         <Label>Measurement</Label>
+        <MenuRow title="iPhone setup (shortcut)" detail="needed on iPhone" onClick={() => setPanel('iphone')} />
         <MenuRow title="Calibration" detail={doc.calibrations.length ? `${doc.calibrations.length} profile(s)` : 'Uncalibrated'} onClick={() => setPanel('calibration')} />
         <MenuRow title="Calibration guide" onClick={() => setPanel('guide')} />
         <MenuRow title="How accurate is this?" onClick={() => setPanel('accuracy')} />
@@ -96,6 +97,9 @@ export function Settings({ onClose }: { onClose: () => void }) {
       </Sheet>
       <Sheet open={panel === 'catalog'} onClose={() => setPanel(null)} title="Film catalog updates" full>
         <CatalogPanel />
+      </Sheet>
+      <Sheet open={panel === 'iphone'} onClose={() => setPanel(null)} title="iPhone setup" full>
+        <IPhoneSetup />
       </Sheet>
       <Sheet open={panel === 'guide'} onClose={() => setPanel(null)} title="Calibration guide" full>
         <Guide />
@@ -508,6 +512,51 @@ function Accuracy() {
       </p>
       <p>
         <b className="text-fg">Incident</b> metering is only offered with a registered diffuser accessory and a consistent calibration — a phone camera is not an incident meter on its own.
+      </p>
+    </div>
+  );
+}
+
+function IPhoneSetup() {
+  return (
+    <div className="space-y-3 text-sm leading-relaxed text-muted">
+      <p>
+        Safari removes the shutter time, aperture and ISO from photos taken inside a web page, and the meter needs them. A two-minute
+        Shortcut hands Zone Ten the original photo instead. You build it once.
+      </p>
+      <Card>
+        <Label>Build the shortcut</Label>
+        <ol className="mt-2 list-decimal space-y-2 pl-5">
+          <li>Open the <b className="text-fg">Shortcuts</b> app → <b className="text-fg">+</b>. Name it “Zone Ten”.</li>
+          <li>
+            Add <b className="text-fg">Get Latest Photos</b>: Get <b className="text-fg">1</b> latest photo, Include Screenshots <b className="text-fg">off</b>.
+          </li>
+          <li>
+            Add <b className="text-fg">Convert Image</b>: convert Photos to <b className="text-fg">JPEG</b>, quality about <b className="text-fg">50%</b>, and turn{' '}
+            <b className="text-fg">Preserve Metadata on</b> (tap the arrow to see it).
+          </li>
+          <li>
+            Add <b className="text-fg">Base64 Encode</b> on the converted image, Line Breaks <b className="text-fg">None</b>.
+          </li>
+          <li>
+            Add <b className="text-fg">Copy to Clipboard</b>.
+          </li>
+          <li>Optional: add <b className="text-fg">Show Notification</b> “Ready — tap Paste in Zone Ten”.</li>
+        </ol>
+      </Card>
+      <Card>
+        <Label>Each reading</Label>
+        <ol className="mt-2 list-decimal space-y-2 pl-5">
+          <li>Take the metering photo with the normal <b className="text-fg">Camera</b> app.</li>
+          <li>Run the <b className="text-fg">Zone Ten</b> shortcut (home-screen icon, widget, or Back Tap: Settings → Accessibility → Touch → Back Tap).</li>
+          <li>
+            Open Zone Ten → <b className="text-fg">Paste from shortcut</b> → tap <b className="text-fg">Paste</b> when iPhone asks.
+          </li>
+        </ol>
+      </Card>
+      <p>
+        Every photo shows a “Photo check” line (shutter ✓ aperture ✓ ISO ✓). If one shows ✗, that step removed the data — check that Preserve Metadata is
+        on. Saving the photo to Files and using “From Files / library” works too.
       </p>
     </div>
   );
