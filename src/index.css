@@ -1,0 +1,83 @@
+@import "tailwindcss";
+
+/* Zone Ten: a black instrument face, white numerals, one safelight-amber accent.
+   Readout first, controls in thumb reach, detail behind disclosures. Tuned for contrast outdoors. */
+@theme {
+  --color-bg: #08080a;
+  --color-surface: #131316;
+  --color-raise: #1c1c20;
+  --color-line: #2a2a2f;
+  --color-line-strong: #3b3b42;
+  --color-fg: #f5f4f0;
+  --color-muted: #a3a29d;
+  --color-dim: #6f6e6a;
+  --color-accent: #f4a93c; /* safelight amber */
+  --color-accent-ink: #1b1103;
+  --color-ok: #78d69a;
+  --color-caution: #f4a93c;
+  --color-critical: #ff6a55;
+  --color-info: #8fb8f2;
+  --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-display: ui-rounded, "SF Pro Rounded", "Nunito", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+:root {
+  color-scheme: dark;
+}
+html,
+body,
+#root {
+  height: 100%;
+}
+body {
+  margin: 0;
+  background: var(--color-bg);
+  color: var(--color-fg);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -webkit-tap-highlight-color: transparent;
+  overscroll-behavior-y: none;
+}
+.tnum {
+  font-variant-numeric: tabular-nums;
+}
+:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+input[type="range"] {
+  accent-color: var(--color-accent);
+}
+.safe-top {
+  padding-top: env(safe-area-inset-top);
+}
+.safe-bottom {
+  padding-bottom: env(safe-area-inset-bottom);
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  scrollbar-width: none;
+}
+
+/* High-contrast display: pure white on black, heavier secondary text. */
+.hc {
+  --color-muted: #e2e1dc;
+  --color-dim: #b9b8b2;
+  --color-line: #55555c;
+  --color-surface: #000;
+  --color-raise: #111;
+}
+/* Night (red) display preserves dark adaptation for astro and night work. */
+.night {
+  filter: sepia(1) saturate(6) hue-rotate(-50deg) brightness(0.75);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    transition: none !important;
+    animation: none !important;
+  }
+}
