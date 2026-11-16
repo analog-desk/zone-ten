@@ -1,0 +1,1118 @@
+{
+  "schemaVersion": 1,
+  "catalogVersion": 1,
+  "publishedAt": "2026-11-16",
+  "manufacturers": [
+    {
+      "id": "kodak",
+      "name": "Kodak",
+      "website": "https://www.kodak.com/en/motion/page/film-stocks",
+      "notes": null
+    },
+    {
+      "id": "fujifilm",
+      "name": "Fujifilm",
+      "website": "https://www.fujifilm.com",
+      "notes": null
+    },
+    {
+      "id": "ilford",
+      "name": "Ilford",
+      "website": "https://www.ilfordphoto.com",
+      "notes": null
+    },
+    {
+      "id": "cinestill",
+      "name": "CineStill",
+      "website": "https://cinestillfilm.com",
+      "notes": null
+    },
+    {
+      "id": "lomography",
+      "name": "Lomography",
+      "website": "https://www.lomography.com",
+      "notes": null
+    },
+    {
+      "id": "kentmere",
+      "name": "Kentmere",
+      "website": "https://www.ilfordphoto.com",
+      "notes": null
+    },
+    {
+      "id": "foma",
+      "name": "Foma",
+      "website": "https://www.foma.cz",
+      "notes": null
+    },
+    {
+      "id": "rollei",
+      "name": "Rollei",
+      "notes": "Awaiting verified records.",
+      "website": null
+    },
+    {
+      "id": "adox",
+      "name": "Adox",
+      "notes": "Awaiting verified records.",
+      "website": null
+    },
+    {
+      "id": "orwo",
+      "name": "ORWO",
+      "notes": "Awaiting verified records.",
+      "website": null
+    },
+    {
+      "id": "harman",
+      "name": "Harman",
+      "notes": "Awaiting verified records.",
+      "website": null
+    },
+    {
+      "id": "other",
+      "name": "Other",
+      "notes": "Custom and community stocks.",
+      "website": null
+    }
+  ],
+  "stocks": [
+    {
+      "id": "kodak-portra-160",
+      "manufacturer": "Kodak",
+      "name": "Portra 160",
+      "category": "colorNegative",
+      "process": "C-41",
+      "boxSpeed": 160,
+      "speedDesignation": "ISO 160",
+      "defaultEI": 160,
+      "formats": [
+        "35mm",
+        "120",
+        "4x5",
+        "8x10"
+      ],
+      "reciprocity": {
+        "kind": "table",
+        "points": [
+          {
+            "metered": 1,
+            "corrected": 1
+          }
+        ],
+        "publishedUpToSeconds": 1,
+        "source": "Kodak Professional technical data E-4051",
+        "note": "Manufacturer states no correction is required up to this time; longer exposures are not characterised — test or add a custom curve."
+      },
+      "status": "available",
+      "manufacturerReference": "Kodak technical data E-4051",
+      "lastVerified": null,
+      "verificationNotes": "Formats and reciprocity transcribed from manufacturer publications; pending re-verification against current datasheet.",
+      "notes": null,
+      "isCustom": false
+    },
+    {
+      "id": "kodak-portra-400",
+      "manufacturer": "Kodak",
+      "name": "Portra 400",
+      "category": "colorNegative",
+      "process": "C-41",
+      "boxSpeed": 400,
+      "speedDesignation": "ISO 400",
+      "defaultEI": 400,
+      "formats": [
+        "35mm",
+        "120",
+        "4x5",
+        "8x10"
+      ],
+      "reciprocity": {
+        "kind": "table",
+        "points": [
+          {
+            "metered": 1,
+            "corrected": 1
+          }
+        ],
+        "publishedUpToSeconds": 1,
+        "source": "Kodak Professional technical data E-4050",
+        "note": "Manufacturer states no correction is required up to this time; longer exposures are not characterised — test or add a custom curve."
+      },
+      "status": "available",
+      "manufacturerReference": "Kodak technical data E-4050",
+      "lastVerified": null,
+      "verificationNotes": "Formats and reciprocity transcribed from manufacturer publications; pending re-verification against current datasheet.",
+      "notes": null,
+      "isCustom": false
+    },
+    {
+      "id": "kodak-portra-800",
+      "manufacturer": "Kodak",
+      "name": "Portra 800",
+      "category": "colorNegative",
+      "process": "C-41",
+      "boxSpeed": 800,
+      "speedDesignation": "ISO 800",
+      "defaultEI": 800,
+      "formats": [
+        "35mm",
+        "120"
+      ],
+      "reciprocity": {
+        "kind": "unpublished"
+      },
+      "status": "available",
+      "manufacturerReference": "Kodak technical data E-4040",
+      "lastVerified": null,
+      "verificationNotes": "Formats and reciprocity transcribed from manufacturer publications; pending re-verification against current datasheet.",
+      "notes": null,
+      "isCustom": false
+    },
+    {
+      "id": "kodak-gold-200",
+      "manufacturer": "Kodak",
+      "name": "Gold 200",
+      "category": "colorNegative",
+      "process": "C-41",
+      "boxSpeed": 200,
+      "speedDesignation": "ISO 200",
+      "defaultEI": 200,
+      "formats": [
+        "35mm",
+        "120"
+      ],
+      "reciprocity": {
+        "kind": "unpublished"
+      },
+      "status": "available",
+      "manufacturerReference": null,
+      "lastVerified": null,
+      "verificationNotes": "Formats and reciprocity transcribed from manufacturer publications; pending re-verification against current datasheet.",
+      "notes": null,
+      "isCustom": false
+    },
+    {
+      "id": "kodak-colorplus-200",
+      "manufacturer": "Kodak",
+      "name": "ColorPlus 200",
+      "category": "colorNegative",
+      "process": "C-41",
+      "boxSpeed": 200,
+      "speedDesignation": "ISO 200",
+      "defaultEI": 200,
+      "formats": [
+        "35mm"
+      ],
+      "reciprocity": {
+        "kind": "unpublished"
+      },
+      "status": "available",
+      "manufacturerReference": null,
+      "lastVerified": null,
+      "verificationNotes": "Formats and reciprocity transcribed from manufacturer publications; pending re-verification against current datasheet.",
+      "notes": null,
+      "isCustom": false
+    },
+    {
+      "id": "kodak-ultramax-400",
+      "manufacturer": "Kodak",
+      "name": "UltraMax 400",
+      "category": "colorNegative",
+      "process": "C-41",
+      "boxSpeed": 400,
+      "speedDesignation": "ISO 400",
+      "defaultEI": 400,
+      "formats": [
+        "35mm"
+      ],
+      "reciprocity": {
+        "kind": "unpublished"
+      },
+      "status": "available",
+      "manufacturerReference": null,
+      "lastVerified": null,
+      "verificationNotes": "Formats and reciprocity transcribed from manufacturer publications; pending re-verification against current datasheet.",
+      "notes": null,
+      "isCustom": false
+    },
+    {
+      "id": "kodak-ektar-100",
+      "manufacturer": "Kodak",
+      "name": "Ektar 100",
+      "category": "colorNegative",
+      "process": "C-41",
+      "boxSpeed": 100,
+      "speedDesignation": "ISO 100",
+      "defaultEI": 100,
+      "formats": [
+        "35mm",
+        "120",
+        "4x5",
+        "8x10"
+      ],
+      "reciprocity": {
+        "kind": "table",
+        "points": [
+          {
+            "metered": 1,
+            "corrected": 1
+          }
+        ],
+        "publishedUpToSeconds": 1,
+        "source": "Kodak Professional technical data E-4046",
+        "note": "Manufacturer states no correction is required up to this time; longer exposures are not characterised — test or add a custom curve."
+      },
+      "status": "available",
+      "manufacturerReference": "Kodak technical data E-4046",
+      "lastVerified": null,
+      "verificationNotes": "Formats and reciprocity transcribed from manufacturer publications; pending re-verification against current datasheet.",
+      "notes": null,
+      "isCustom": false
+    },
+    {
+      "id": "kodak-ektachrome-e100",
+      "manufacturer": "Kodak",
+      "name": "Ektachrome E100",
+      "category": "colorReversal",
+      "process": "E-6",
+      "boxSpeed": 100,
+      "speedDesignation": "ISO 100",
+      "defaultEI": 100,
+      "formats": [
+        "35mm",
+        "120",
+        "4x5",
+        "8x10"
+      ],
+      "reciprocity": {
+        "kind": "unpublished"
+      },
+      "status": "available",
+      "manufacturerReference": "Kodak technical data E-4000",
+      "lastVerified": null,
+      "verificationNotes": "Formats and reciprocity transcribed from manufacturer publications; pending re-verification against current datasheet.",
+      "notes": null,
+      "isCustom": false
+    },
+    {
+      "id": "kodak-tri-x-400",
+      "manufacturer": "Kodak",
+      "name": "Tri-X 400",
+      "category": "bwNegative",
+      "process": "B&W",
+      "boxSpeed": 400,
+      "speedDesignation": "ISO 400",
+      "defaultEI": 400,
+      "formats": [
+        "35mm",
+        "120"
+      ],
+      "reciprocity": {
+        "kind": "table",
+        "points": [
+          {
+            "metered": 0.1,
+            "corrected": 0.1
+          },
+          {
+            "metered": 1,
+            "corrected": 2
+          },
+          {
+            "metered": 10,
+            "corrected": 50
+          },
+          {
+            "metered": 100,
+            "corrected": 1200
+          }
+        ],
+        "publishedUpToSeconds": 100,
+        "source": "Kodak technical data F-4017",
+        "note": "Kodak also recommends reduced development for long exposures (see datasheet)."
+      },
+      "status": "available",
+      "manufacturerReference": "Kodak technical data F-4017",
+      "lastVerified": null,
+      "verificationNotes": "Formats and reciprocity transcribed from manufacturer publications; pending re-verification against current datasheet.",
+      "notes": null,
+      "isCustom": false
+    },
+    {
+      "id": "kodak-t-max-100",
+      "manufacturer": "Kodak",
+      "name": "T-Max 100",
+      "category": "bwNegative",
+      "process": "B&W",
+      "boxSpeed": 100,
+      "speedDesignation": "ISO 100",
+      "defaultEI": 100,
+      "formats": [
+        "35mm",
+        "120",
+        "4x5",
+        "8x10"
+      ],
+      "reciprocity": {
+        "kind": "table",
+        "points": [
+          {
+            "metered": 0.1,
+            "corrected": 0.1
+          },
+          {
+            "metered": 1,
+            "corrected": 1.26
+          },
+          {
+            "metered": 10,
+            "corrected": 15
+          },
+          {
+            "metered": 100,
+            "corrected": 200
+          }
+        ],
+        "publishedUpToSeconds": 100,
+        "source": "Kodak technical data F-4016"
+      },
+      "status": "available",
+      "manufacturerReference": "Kodak technical data F-4016",
+      "lastVerified": null,
+      "verificationNotes": "Formats and reciprocity transcribed from manufacturer publications; pending re-verification against current datasheet.",
+      "notes": null,
+      "isCustom": false
+    },
+    {
+      "id": "kodak-t-max-400",
+      "manufacturer": "Kodak",
+      "name": "T-Max 400",
+      "category": "bwNegative",
+      "process": "B&W",
+      "boxSpeed": 400,
+      "speedDesignation": "ISO 400",
+      "defaultEI": 400,
+      "formats": [
+        "35mm",
+        "120",
+        "4x5",
+        "8x10"
+      ],
+      "reciprocity": {
+        "kind": "table",
+        "points": [
+          {
+            "metered": 0.1,
+            "corrected": 0.1
+          },
+          {
+            "metered": 1,
+            "corrected": 1.26
+          },
+          {
+            "metered": 10,
+            "corrected": 15
+          },
+          {
+            "metered": 100,
+            "corrected": 300
+          }
+        ],
+        "publishedUpToSeconds": 100,
+        "source": "Kodak technical data F-4043"
+      },
+      "status": "available",
+      "manufacturerReference": "Kodak technical data F-4043",
+      "lastVerified": null,
+      "verificationNotes": "Formats and reciprocity transcribed from manufacturer publications; pending re-verification against current datasheet.",
+      "notes": null,
+      "isCustom": false
+    },
+    {
+      "id": "kodak-t-max-p3200",
+      "manufacturer": "Kodak",
+      "name": "T-Max P3200",
+      "category": "bwNegative",
+      "process": "B&W",
+      "boxSpeed": null,
+      "speedDesignation": "P3200",
+      "defaultEI": 3200,
+      "formats": [
+        "35mm"
+      ],
+      "reciprocity": {
+        "kind": "unpublished"
+      },
+      "status": "available",
+      "manufacturerReference": null,
+      "lastVerified": null,
+      "verificationNotes": "Formats and reciprocity transcribed from manufacturer publications; pending re-verification against current datasheet.",
+      "notes": "Multi-speed film designed for push processing; the P3200 designation is not its ISO box speed. Exposure differences are expressed relative to EI 3200 — consult the Kodak datasheet.",
+      "isCustom": false
+    },
+    {
+      "id": "fujifilm-fujicolor-200",
+      "manufacturer": "Fujifilm",
+      "name": "Fujicolor 200",
+      "category": "colorNegative",
+      "process": "C-41",
+      "boxSpeed": 200,
+      "speedDesignation": "ISO 200",
+      "defaultEI": 200,
+      "formats": [
+        "35mm"
+      ],
+      "reciprocity": {
+        "kind": "unpublished"
+      },
+      "status": "available",
+      "manufacturerReference": null,
+      "lastVerified": null,
+      "verificationNotes": "Formats and reciprocity transcribed from manufacturer publications; pending re-verification against current datasheet.",
+      "notes": null,
+      "isCustom": false
+    },
+    {
+      "id": "fujifilm-400",
+      "manufacturer": "Fujifilm",
+      "name": "Fujifilm 400",
+      "category": "colorNegative",
+      "process": "C-41",
+      "boxSpeed": 400,
+      "speedDesignation": "ISO 400",
+      "defaultEI": 400,
+      "formats": [
+        "35mm"
+      ],
+      "reciprocity": {
+        "kind": "unpublished"
+      },
+      "status": "available",
+      "manufacturerReference": null,
+      "lastVerified": null,
+      "verificationNotes": "Formats and reciprocity transcribed from manufacturer publications; pending re-verification against current datasheet.",
+      "notes": null,
+      "isCustom": false
+    },
+    {
+      "id": "fujifilm-provia-100f",
+      "manufacturer": "Fujifilm",
+      "name": "Provia 100F",
+      "category": "colorReversal",
+      "process": "E-6",
+      "boxSpeed": 100,
+      "speedDesignation": "ISO 100",
+      "defaultEI": 100,
+      "formats": [
+        "35mm",
+        "120"
+      ],
+      "reciprocity": {
+        "kind": "table",
+        "points": [
+          {
+            "metered": 128,
+            "corrected": 128
+          },
+          {
+            "metered": 240,
+            "corrected": 302
+          }
+        ],
+        "publishedUpToSeconds": 240,
+        "source": "Fujifilm Provia 100F data sheet",
+        "note": "No correction up to 128 s; +⅓ stop at 4 min. Longer exposures not characterised."
+      },
+      "status": "available",
+      "manufacturerReference": "Fujifilm Provia 100F data sheet",
+      "lastVerified": null,
+      "verificationNotes": "Formats and reciprocity transcribed from manufacturer publications; pending re-verification against current datasheet.",
+      "notes": null,
+      "isCustom": false
+    },
+    {
+      "id": "fujifilm-velvia-50",
+      "manufacturer": "Fujifilm",
+      "name": "Velvia 50",
+      "category": "colorReversal",
+      "process": "E-6",
+      "boxSpeed": 50,
+      "speedDesignation": "ISO 50",
+      "defaultEI": 50,
+      "formats": [
+        "35mm",
+        "120"
+      ],
+      "reciprocity": {
+        "kind": "unpublished"
+      },
+      "status": "available",
+      "manufacturerReference": null,
+      "lastVerified": null,
+      "verificationNotes": "Formats and reciprocity transcribed from manufacturer publications; pending re-verification against current datasheet.",
+      "notes": null,
+      "isCustom": false
+    },
+    {
+      "id": "fujifilm-velvia-100",
+      "manufacturer": "Fujifilm",
+      "name": "Velvia 100",
+      "category": "colorReversal",
+      "process": "E-6",
+      "boxSpeed": 100,
+      "speedDesignation": "ISO 100",
+      "defaultEI": 100,
+      "formats": [
+        "35mm",
+        "120"
+      ],
+      "reciprocity": {
+        "kind": "unpublished"
+      },
+      "status": "available",
+      "manufacturerReference": null,
+      "lastVerified": null,
+      "verificationNotes": "Formats and reciprocity transcribed from manufacturer publications; pending re-verification against current datasheet.",
+      "notes": null,
+      "isCustom": false
+    },
+    {
+      "id": "ilford-hp5-plus",
+      "manufacturer": "Ilford",
+      "name": "HP5 Plus",
+      "category": "bwNegative",
+      "process": "B&W",
+      "boxSpeed": 400,
+      "speedDesignation": "ISO 400",
+      "defaultEI": 400,
+      "formats": [
+        "35mm",
+        "120",
+        "4x5",
+        "8x10"
+      ],
+      "reciprocity": {
+        "kind": "powerLaw",
+        "exponent": 1.31,
+        "appliesAboveSeconds": 1,
+        "source": "Ilford Photo / Harman technical information: reciprocity law failure compensation (Tc = Tm^p)",
+        "note": "Formula applies to metered times longer than 1 s."
+      },
+      "status": "available",
+      "manufacturerReference": null,
+      "lastVerified": null,
+      "verificationNotes": "Formats and reciprocity transcribed from manufacturer publications; pending re-verification against current datasheet.",
+      "notes": null,
+      "isCustom": false
+    },
+    {
+      "id": "ilford-fp4-plus",
+      "manufacturer": "Ilford",
+      "name": "FP4 Plus",
+      "category": "bwNegative",
+      "process": "B&W",
+      "boxSpeed": 125,
+      "speedDesignation": "ISO 125",
+      "defaultEI": 125,
+      "formats": [
+        "35mm",
+        "120",
+        "4x5",
+        "8x10"
+      ],
+      "reciprocity": {
+        "kind": "powerLaw",
+        "exponent": 1.26,
+        "appliesAboveSeconds": 1,
+        "source": "Ilford Photo / Harman technical information: reciprocity law failure compensation (Tc = Tm^p)",
+        "note": "Formula applies to metered times longer than 1 s."
+      },
+      "status": "available",
+      "manufacturerReference": null,
+      "lastVerified": null,
+      "verificationNotes": "Formats and reciprocity transcribed from manufacturer publications; pending re-verification against current datasheet.",
+      "notes": null,
+      "isCustom": false
+    },
+    {
+      "id": "ilford-pan-f-plus",
+      "manufacturer": "Ilford",
+      "name": "Pan F Plus",
+      "category": "bwNegative",
+      "process": "B&W",
+      "boxSpeed": 50,
+      "speedDesignation": "ISO 50",
+      "defaultEI": 50,
+      "formats": [
+        "35mm",
+        "120"
+      ],
+      "reciprocity": {
+        "kind": "powerLaw",
+        "exponent": 1.33,
+        "appliesAboveSeconds": 1,
+        "source": "Ilford Photo / Harman technical information: reciprocity law failure compensation (Tc = Tm^p)",
+        "note": "Formula applies to metered times longer than 1 s."
+      },
+      "status": "available",
+      "manufacturerReference": null,
+      "lastVerified": null,
+      "verificationNotes": "Formats and reciprocity transcribed from manufacturer publications; pending re-verification against current datasheet.",
+      "notes": null,
+      "isCustom": false
+    },
+    {
+      "id": "ilford-delta-100",
+      "manufacturer": "Ilford",
+      "name": "Delta 100",
+      "category": "bwNegative",
+      "process": "B&W",
+      "boxSpeed": 100,
+      "speedDesignation": "ISO 100",
+      "defaultEI": 100,
+      "formats": [
+        "35mm",
+        "120",
+        "4x5",
+        "8x10"
+      ],
+      "reciprocity": {
+        "kind": "powerLaw",
+        "exponent": 1.26,
+        "appliesAboveSeconds": 1,
+        "source": "Ilford Photo / Harman technical information: reciprocity law failure compensation (Tc = Tm^p)",
+        "note": "Formula applies to metered times longer than 1 s."
+      },
+      "status": "available",
+      "manufacturerReference": null,
+      "lastVerified": null,
+      "verificationNotes": "Formats and reciprocity transcribed from manufacturer publications; pending re-verification against current datasheet.",
+      "notes": null,
+      "isCustom": false
+    },
+    {
+      "id": "ilford-delta-400",
+      "manufacturer": "Ilford",
+      "name": "Delta 400",
+      "category": "bwNegative",
+      "process": "B&W",
+      "boxSpeed": 400,
+      "speedDesignation": "ISO 400",
+      "defaultEI": 400,
+      "formats": [
+        "35mm",
+        "120"
+      ],
+      "reciprocity": {
+        "kind": "powerLaw",
+        "exponent": 1.41,
+        "appliesAboveSeconds": 1,
+        "source": "Ilford Photo / Harman technical information: reciprocity law failure compensation (Tc = Tm^p)",
+        "note": "Formula applies to metered times longer than 1 s."
+      },
+      "status": "available",
+      "manufacturerReference": null,
+      "lastVerified": null,
+      "verificationNotes": "Formats and reciprocity transcribed from manufacturer publications; pending re-verification against current datasheet.",
+      "notes": null,
+      "isCustom": false
+    },
+    {
+      "id": "ilford-delta-3200",
+      "manufacturer": "Ilford",
+      "name": "Delta 3200",
+      "category": "bwNegative",
+      "process": "B&W",
+      "boxSpeed": null,
+      "speedDesignation": "3200",
+      "defaultEI": 3200,
+      "formats": [
+        "35mm",
+        "120"
+      ],
+      "reciprocity": {
+        "kind": "powerLaw",
+        "exponent": 1.33,
+        "appliesAboveSeconds": 1,
+        "source": "Ilford Photo / Harman technical information: reciprocity law failure compensation (Tc = Tm^p)",
+        "note": "Formula applies to metered times longer than 1 s."
+      },
+      "status": "available",
+      "manufacturerReference": null,
+      "lastVerified": null,
+      "verificationNotes": "Formats and reciprocity transcribed from manufacturer publications; pending re-verification against current datasheet.",
+      "notes": "Ilford gives Delta 3200 an ISO speed of 1000 under standard development; the 3200 designation assumes push processing. Exposure differences are expressed relative to EI 3200.",
+      "isCustom": false
+    },
+    {
+      "id": "ilford-ortho-plus",
+      "manufacturer": "Ilford",
+      "name": "Ortho Plus",
+      "category": "specialty",
+      "process": "B&W",
+      "boxSpeed": 80,
+      "speedDesignation": "ISO 80",
+      "defaultEI": 80,
+      "formats": [
+        "35mm",
+        "120",
+        "4x5",
+        "8x10"
+      ],
+      "reciprocity": {
+        "kind": "powerLaw",
+        "exponent": 1.25,
+        "appliesAboveSeconds": 1,
+        "source": "Ilford Photo / Harman technical information: reciprocity law failure compensation (Tc = Tm^p)",
+        "note": "Formula applies to metered times longer than 1 s."
+      },
+      "status": "available",
+      "manufacturerReference": null,
+      "lastVerified": null,
+      "verificationNotes": "Formats and reciprocity transcribed from manufacturer publications; pending re-verification against current datasheet.",
+      "notes": "Orthochromatic: insensitive to red light. Box speed is the daylight rating.",
+      "isCustom": false
+    },
+    {
+      "id": "ilford-sfx-200",
+      "manufacturer": "Ilford",
+      "name": "SFX 200",
+      "category": "specialty",
+      "process": "B&W",
+      "boxSpeed": 200,
+      "speedDesignation": "ISO 200",
+      "defaultEI": 200,
+      "formats": [
+        "35mm",
+        "120"
+      ],
+      "reciprocity": {
+        "kind": "powerLaw",
+        "exponent": 1.43,
+        "appliesAboveSeconds": 1,
+        "source": "Ilford Photo / Harman technical information: reciprocity law failure compensation (Tc = Tm^p)",
+        "note": "Formula applies to metered times longer than 1 s."
+      },
+      "status": "available",
+      "manufacturerReference": null,
+      "lastVerified": null,
+      "verificationNotes": "Formats and reciprocity transcribed from manufacturer publications; pending re-verification against current datasheet.",
+      "notes": "Extended red sensitivity; with a deep red filter it gives an infrared-like effect.",
+      "isCustom": false
+    },
+    {
+      "id": "ilford-xp2-super",
+      "manufacturer": "Ilford",
+      "name": "XP2 Super",
+      "category": "bwNegative",
+      "process": "C-41",
+      "boxSpeed": 400,
+      "speedDesignation": "ISO 400",
+      "defaultEI": 400,
+      "formats": [
+        "35mm",
+        "120"
+      ],
+      "reciprocity": {
+        "kind": "powerLaw",
+        "exponent": 1.31,
+        "appliesAboveSeconds": 1,
+        "source": "Ilford Photo / Harman technical information: reciprocity law failure compensation (Tc = Tm^p)",
+        "note": "Formula applies to metered times longer than 1 s."
+      },
+      "status": "available",
+      "manufacturerReference": null,
+      "lastVerified": null,
+      "verificationNotes": "Formats and reciprocity transcribed from manufacturer publications; pending re-verification against current datasheet.",
+      "notes": "Chromogenic black & white film processed in C-41.",
+      "isCustom": false
+    },
+    {
+      "id": "cinestill-50d",
+      "manufacturer": "CineStill",
+      "name": "50D",
+      "category": "colorNegative",
+      "process": "C-41",
+      "boxSpeed": 50,
+      "speedDesignation": "ISO 50",
+      "defaultEI": 50,
+      "formats": [
+        "35mm",
+        "120",
+        "4x5"
+      ],
+      "reciprocity": {
+        "kind": "unpublished"
+      },
+      "status": "available",
+      "manufacturerReference": null,
+      "lastVerified": null,
+      "verificationNotes": "Formats and reciprocity transcribed from manufacturer publications; pending re-verification against current datasheet.",
+      "notes": "Daylight balanced.",
+      "isCustom": false
+    },
+    {
+      "id": "cinestill-400d",
+      "manufacturer": "CineStill",
+      "name": "400D",
+      "category": "colorNegative",
+      "process": "C-41",
+      "boxSpeed": 400,
+      "speedDesignation": "ISO 400",
+      "defaultEI": 400,
+      "formats": [
+        "35mm",
+        "120"
+      ],
+      "reciprocity": {
+        "kind": "unpublished"
+      },
+      "status": "available",
+      "manufacturerReference": null,
+      "lastVerified": null,
+      "verificationNotes": "Formats and reciprocity transcribed from manufacturer publications; pending re-verification against current datasheet.",
+      "notes": "Daylight balanced.",
+      "isCustom": false
+    },
+    {
+      "id": "cinestill-800t",
+      "manufacturer": "CineStill",
+      "name": "800T",
+      "category": "colorNegative",
+      "process": "C-41",
+      "boxSpeed": 800,
+      "speedDesignation": "ISO 800",
+      "defaultEI": 800,
+      "formats": [
+        "35mm",
+        "120",
+        "4x5"
+      ],
+      "reciprocity": {
+        "kind": "unpublished"
+      },
+      "status": "available",
+      "manufacturerReference": null,
+      "lastVerified": null,
+      "verificationNotes": "Formats and reciprocity transcribed from manufacturer publications; pending re-verification against current datasheet.",
+      "notes": "Tungsten balanced (3200K).",
+      "isCustom": false
+    },
+    {
+      "id": "lomography-cn-100",
+      "manufacturer": "Lomography",
+      "name": "Color Negative 100",
+      "category": "colorNegative",
+      "process": "C-41",
+      "boxSpeed": 100,
+      "speedDesignation": "ISO 100",
+      "defaultEI": 100,
+      "formats": [
+        "35mm",
+        "120"
+      ],
+      "reciprocity": {
+        "kind": "unpublished"
+      },
+      "status": "available",
+      "manufacturerReference": null,
+      "lastVerified": null,
+      "verificationNotes": "Formats and reciprocity transcribed from manufacturer publications; pending re-verification against current datasheet.",
+      "notes": null,
+      "isCustom": false
+    },
+    {
+      "id": "lomography-cn-400",
+      "manufacturer": "Lomography",
+      "name": "Color Negative 400",
+      "category": "colorNegative",
+      "process": "C-41",
+      "boxSpeed": 400,
+      "speedDesignation": "ISO 400",
+      "defaultEI": 400,
+      "formats": [
+        "35mm",
+        "120"
+      ],
+      "reciprocity": {
+        "kind": "unpublished"
+      },
+      "status": "available",
+      "manufacturerReference": null,
+      "lastVerified": null,
+      "verificationNotes": "Formats and reciprocity transcribed from manufacturer publications; pending re-verification against current datasheet.",
+      "notes": null,
+      "isCustom": false
+    },
+    {
+      "id": "lomography-cn-800",
+      "manufacturer": "Lomography",
+      "name": "Color Negative 800",
+      "category": "colorNegative",
+      "process": "C-41",
+      "boxSpeed": 800,
+      "speedDesignation": "ISO 800",
+      "defaultEI": 800,
+      "formats": [
+        "35mm",
+        "120"
+      ],
+      "reciprocity": {
+        "kind": "unpublished"
+      },
+      "status": "available",
+      "manufacturerReference": null,
+      "lastVerified": null,
+      "verificationNotes": "Formats and reciprocity transcribed from manufacturer publications; pending re-verification against current datasheet.",
+      "notes": null,
+      "isCustom": false
+    },
+    {
+      "id": "kentmere-pan-100",
+      "manufacturer": "Kentmere",
+      "name": "Pan 100",
+      "category": "bwNegative",
+      "process": "B&W",
+      "boxSpeed": 100,
+      "speedDesignation": "ISO 100",
+      "defaultEI": 100,
+      "formats": [
+        "35mm"
+      ],
+      "reciprocity": {
+        "kind": "powerLaw",
+        "exponent": 1.26,
+        "appliesAboveSeconds": 1,
+        "source": "Ilford Photo / Harman technical information: reciprocity law failure compensation (Tc = Tm^p)",
+        "note": "Formula applies to metered times longer than 1 s."
+      },
+      "status": "available",
+      "manufacturerReference": null,
+      "lastVerified": null,
+      "verificationNotes": "Formats and reciprocity transcribed from manufacturer publications; pending re-verification against current datasheet.",
+      "notes": null,
+      "isCustom": false
+    },
+    {
+      "id": "kentmere-pan-400",
+      "manufacturer": "Kentmere",
+      "name": "Pan 400",
+      "category": "bwNegative",
+      "process": "B&W",
+      "boxSpeed": 400,
+      "speedDesignation": "ISO 400",
+      "defaultEI": 400,
+      "formats": [
+        "35mm"
+      ],
+      "reciprocity": {
+        "kind": "powerLaw",
+        "exponent": 1.3,
+        "appliesAboveSeconds": 1,
+        "source": "Ilford Photo / Harman technical information: reciprocity law failure compensation (Tc = Tm^p)",
+        "note": "Formula applies to metered times longer than 1 s."
+      },
+      "status": "available",
+      "manufacturerReference": null,
+      "lastVerified": null,
+      "verificationNotes": "Formats and reciprocity transcribed from manufacturer publications; pending re-verification against current datasheet.",
+      "notes": null,
+      "isCustom": false
+    },
+    {
+      "id": "kentmere-pan-800",
+      "manufacturer": "Kentmere",
+      "name": "Pan 800",
+      "category": "bwNegative",
+      "process": "B&W",
+      "boxSpeed": 800,
+      "speedDesignation": "ISO 800",
+      "defaultEI": 800,
+      "formats": [
+        "35mm"
+      ],
+      "reciprocity": {
+        "kind": "unpublished"
+      },
+      "status": "unverified",
+      "manufacturerReference": null,
+      "lastVerified": null,
+      "verificationNotes": "Included at the speed given in the product specification. Product availability, formats and reciprocity have not been confirmed against a Harman publication.",
+      "notes": null,
+      "isCustom": false
+    },
+    {
+      "id": "foma-fomapan-100",
+      "manufacturer": "Foma",
+      "name": "Fomapan 100",
+      "category": "bwNegative",
+      "process": "B&W",
+      "boxSpeed": 100,
+      "speedDesignation": "ISO 100",
+      "defaultEI": 100,
+      "formats": [
+        "35mm",
+        "120",
+        "4x5",
+        "8x10"
+      ],
+      "reciprocity": {
+        "kind": "unpublished"
+      },
+      "status": "available",
+      "manufacturerReference": null,
+      "lastVerified": null,
+      "verificationNotes": "Formats and reciprocity transcribed from manufacturer publications; pending re-verification against current datasheet.",
+      "notes": null,
+      "isCustom": false
+    },
+    {
+      "id": "foma-fomapan-200",
+      "manufacturer": "Foma",
+      "name": "Fomapan 200",
+      "category": "bwNegative",
+      "process": "B&W",
+      "boxSpeed": 200,
+      "speedDesignation": "ISO 200",
+      "defaultEI": 200,
+      "formats": [
+        "35mm",
+        "120",
+        "4x5"
+      ],
+      "reciprocity": {
+        "kind": "unpublished"
+      },
+      "status": "available",
+      "manufacturerReference": null,
+      "lastVerified": null,
+      "verificationNotes": "Formats and reciprocity transcribed from manufacturer publications; pending re-verification against current datasheet.",
+      "notes": null,
+      "isCustom": false
+    },
+    {
+      "id": "foma-fomapan-400",
+      "manufacturer": "Foma",
+      "name": "Fomapan 400",
+      "category": "bwNegative",
+      "process": "B&W",
+      "boxSpeed": 400,
+      "speedDesignation": "ISO 400",
+      "defaultEI": 400,
+      "formats": [
+        "35mm",
+        "120",
+        "4x5"
+      ],
+      "reciprocity": {
+        "kind": "unpublished"
+      },
+      "status": "available",
+      "manufacturerReference": null,
+      "lastVerified": null,
+      "verificationNotes": "Formats and reciprocity transcribed from manufacturer publications; pending re-verification against current datasheet.",
+      "notes": null,
+      "isCustom": false
+    }
+  ]
+}
