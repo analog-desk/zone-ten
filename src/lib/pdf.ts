@@ -55,7 +55,7 @@ export async function sessionPDF(session: Session, readings: Reading[]): Promise
   doc.setFont('helvetica', 'normal');
   doc.setFontSize(10);
   doc.setTextColor(90);
-  doc.text(`${new Date(session.createdAt).toLocaleString()} · ${readings.length} reading${readings.length === 1 ? '' : 's'} · Zone Ten light meter`, M, y);
+  doc.text(`${new Date(session.createdAt).toLocaleString()} · ${readings.length} reading${readings.length === 1 ? '' : 's'} · Vaaro Light Meter`, M, y);
   y += 5;
   if (session.notes) {
     const n = doc.splitTextToSize(session.notes, W - 2 * M);

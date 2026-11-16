@@ -5,7 +5,7 @@ import { maxStarPointSeconds } from './tools';
 import type { CameraProfile, FilmStock } from './types';
 
 // Bulb planner: for scenes where the light meter can't give a time. The photographer says what they want
-// (traffic trails, star trails, Milky Way…); Zone Ten picks the aperture and the time to hold the shutter open.
+// (traffic trails, star trails, Milky Way…); the app picks the aperture and the time to hold the shutter open.
 
 /** Typical scene brightness for night/low-light subjects (EV at ISO 100). Starting points from standard
  *  exposure-value tables — real scenes vary, so results are always bracketed. */

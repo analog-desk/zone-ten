@@ -1,6 +1,6 @@
 @import "tailwindcss";
 
-/* Zone Ten: a black instrument face, white numerals, one safelight-amber accent.
+/* Vaaro Light Meter: a black instrument face, white numerals, one safelight-amber accent.
    Readout first, controls in thumb reach, detail behind disclosures. Tuned for contrast outdoors. */
 @theme {
   --color-bg: #08080a;

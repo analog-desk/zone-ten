@@ -80,7 +80,7 @@ export function yashicaA(): CameraProfile {
     isoMax: 25600,
     builtInMeter: false,
     isoPerShot: false,
-    notes: ['No built-in exposure meter — all readings come from Zone Ten.', 'Select film stock and working EI; the camera has no ISO setting.'],
+    notes: ['No built-in exposure meter — use your light meter app with Vaaro Light Meter.', 'Select film stock and working EI; the camera has no ISO setting.'],
   };
 }
 

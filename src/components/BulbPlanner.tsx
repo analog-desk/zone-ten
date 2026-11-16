@@ -173,7 +173,7 @@ export function BulbPlanner({
             </div>
           ) : (
             <div className="mt-2">
-              <p className="mb-2 text-xs text-dim">Open your meter wide and raise its ISO until it gives any reading, then enter it. Zone Ten scales it to your film and aperture.</p>
+              <p className="mb-2 text-xs text-dim">Open your meter wide and raise its ISO until it gives any reading, then enter it. Vaaro Light Meter scales it to your film and aperture.</p>
               <div className="grid grid-cols-3 gap-2">
                 <MiniSelect label="ISO" value={mIso} onChange={setMIso} options={isos.map((v) => ({ v, label: fmtISO(v) }))} />
                 <MiniSelect label="Shutter" value={mT} onChange={setMT} options={speeds} />

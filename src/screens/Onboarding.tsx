@@ -123,7 +123,7 @@ export function Onboarding() {
           </button>
         )}
         <div className="mr-auto">
-          <div className="font-display text-sm font-semibold tracking-wide text-accent">ZONE TEN</div>
+          <div className="font-display text-sm font-semibold tracking-wide text-accent">VAARO LIGHT METER</div>
           <div className="text-xs text-dim">Setup {step - 1} of 5</div>
         </div>
         {doc.cameras.length > 0 && (

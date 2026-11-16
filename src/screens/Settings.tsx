@@ -61,7 +61,7 @@ export function Settings({ onClose }: { onClose: () => void }) {
         />
       </section>
 
-      <p className="text-center text-xs text-dim">Zone Ten · works offline · data stays on this device</p>
+      <p className="text-center text-xs text-dim">Vaaro Light Meter · works offline · data stays on this device</p>
 
       <Sheet open={panel === 'catalog'} onClose={() => setPanel(null)} title="Film catalog updates" full>
         <CatalogPanel />
@@ -203,7 +203,7 @@ function BackupRow() {
             const blob = new Blob([JSON.stringify({ app: 'zone-ten', exportedAt: new Date().toISOString(), doc: getDoc(), images })], { type: 'application/json' });
             const a = document.createElement('a');
             a.href = URL.createObjectURL(blob);
-            a.download = `zone-ten-backup-${new Date().toISOString().slice(0, 10)}.json`;
+            a.download = `vaaro-light-meter-backup-${new Date().toISOString().slice(0, 10)}.json`;
             a.click();
           }}
         >
@@ -220,7 +220,7 @@ function BackupRow() {
               if (!f) return;
               try {
                 const data = JSON.parse(await f.text()) as { app?: string; doc?: DBDoc; images?: Record<string, string> };
-                if (data.app !== 'zone-ten' || !data.doc || data.doc.version !== 1) throw new Error('Not a Zone Ten backup.');
+                if (data.app !== 'zone-ten' || !data.doc || data.doc.version !== 1) throw new Error('Not a Vaaro Light Meter backup.');
                 if (!confirm('Replace all cameras, rolls, sessions and calibrations on this device with the backup?')) return;
                 for (const [k, v] of Object.entries(data.images ?? {})) await imgSet(k, await (await fetch(v)).blob());
                 replaceDoc(data.doc);

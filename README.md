@@ -1,4 +1,4 @@
-# Zone Ten
+# Vaaro Light Meter
 
 A mobile-first exposure companion for film photographers, set up for a **Pentax LX**, **Canon AE-1 Program** and
 **Yashica A** (plus any camera you add). Meter with your usual light meter app, then:

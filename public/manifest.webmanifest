@@ -1,6 +1,6 @@
 {
-  "name": "Zone Ten Light Meter",
-  "short_name": "Zone Ten",
+  "name": "Vaaro Light Meter",
+  "short_name": "Vaaro Meter",
   "description": "Light meter for film photographers: camera-aware exposure, film library, reciprocity, Zone System and sessions.",
   "start_url": "./",
   "scope": "./",

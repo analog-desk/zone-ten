@@ -230,7 +230,7 @@ export function Shoot({ goTo }: { goTo: (tab: 'profiles' | 'sessions') => void }
         </div>
         <p className="text-sm text-muted">
           Only the {camera.name}'s settings are listed. Set your meter app to the same ISO as your film and pick the matching shutter speed and f-stop; if
-          your meter shows a value in between, pick the nearest one here.{camera.bulb ? ' For long exposures your meter can’t time, choose B and Zone Ten works out how long to hold it open.' : ''}
+          your meter shows a value in between, pick the nearest one here.{camera.bulb ? ' For long exposures your meter can’t time, choose B and the app works out how long to hold it open.' : ''}
         </p>
         <div className="grid grid-cols-3 gap-2">
           <BigSelect label="ISO" value={isoSel} onChange={setIso} options={scales.isos.map((v) => ({ value: v, label: fmtISO(v) }))} />
