@@ -9,3 +9,4 @@ export * from './tools';
 export * from './measure';
 export * from './calibration';
 export * from './meterState';
+export * from './bulb';

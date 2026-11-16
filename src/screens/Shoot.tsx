@@ -37,6 +37,7 @@ import {
   type ExposureOption,
   type Goal,
 } from '../engine';
+import { BulbPlanner } from '../components/BulbPlanner';
 import { BulbTimer } from '../components/BulbTimer';
 import { GoalGrid } from '../components/pickers';
 import { RollManager } from '../components/RollSheet';
@@ -62,7 +63,8 @@ function cameraScales(camera: CameraProfile | null, ei: number) {
   return { aps, speeds, isos: isos.length ? isos : isoScale(3, camera.isoMin, camera.isoMax) };
 }
 
-type Stage = 'goal' | 'reading' | 'result';
+type Stage = 'goal' | 'reading' | 'result' | 'bulb';
+const BULB_GOALS: Goal[] = ['lightTrails', 'astrophotography', 'night', 'longExposure'];
 
 export function Shoot({ goTo }: { goTo: (tab: 'profiles' | 'sessions') => void }) {
   const { doc, camera, roll, film, workingEI } = useShooting();
@@ -209,8 +211,20 @@ export function Shoot({ goTo }: { goTo: (tab: 'profiles' | 'sessions') => void }
     );
   }
 
+  // --- Bulb planner: the meter can't give a time ------------------------------------------------------------
+  if (stage === 'bulb') {
+    return (
+      <div className="space-y-3 px-3 pb-6 pt-2">
+        {chips}
+        <BulbPlanner camera={camera} film={film} roll={roll} ei={workingEI} goal={goal} goalLabel={goalLabel} astroRule={prefs.astroRule} onBack={() => setStage('reading')} />
+        {sheets}
+      </div>
+    );
+  }
+
   // --- Step 2: the external meter's reading ---------------------------------------------------------------
   if (stage === 'reading') {
+    const bulbGoal = !!goal && BULB_GOALS.includes(goal);
     return (
       <div className="space-y-4 px-3 pb-6 pt-2">
         {chips}
@@ -220,6 +234,19 @@ export function Shoot({ goTo }: { goTo: (tab: 'profiles' | 'sessions') => void }
           </button>
           <h1 className="font-display text-[26px] font-semibold leading-tight">What did your light meter give you?</h1>
         </div>
+        {camera.bulb && (
+          <button
+            type="button"
+            onClick={() => setStage('bulb')}
+            className={cx('flex w-full items-center justify-between rounded-2xl border px-4 py-3 text-left', bulbGoal ? 'border-accent bg-accent/10' : 'border-line bg-surface')}
+          >
+            <span>
+              <span className="block font-semibold">Shooting on Bulb?</span>
+              <span className="block text-sm text-muted">Your meter can't time it — Zone Ten works out how long to hold the shutter open.</span>
+            </span>
+            <span className="text-accent">→</span>
+          </button>
+        )}
         <p className="text-sm text-muted">
           Only the {camera.name}'s settings are listed. Set your meter app to the same ISO as your film and pick the matching shutter speed and f-stop; if
           your meter shows a value in between, pick the nearest one here.
