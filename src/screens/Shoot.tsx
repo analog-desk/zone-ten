@@ -4,7 +4,6 @@ import {
   GOALS,
   ND_FILTERS,
   apLabel,
-  apertureScale,
   boxSpeedLabel,
   correctReciprocity,
   creative,
@@ -25,12 +24,16 @@ import {
   optionLabel,
   reciprocityText,
   shutterLabel,
-  shutterScale,
+  sortedApertures,
+  sortedSpeeds,
   shutterSeconds,
   solve,
   sp,
   timed,
+  type Aperture,
+  type CameraProfile,
   type ExposureInputs,
+  type ShutterSpeed,
   type ExposureOption,
   type Goal,
 } from '../engine';
@@ -42,9 +45,22 @@ import { saveReading, setActiveCamera, setGoal } from '../state/actions';
 import { useShooting } from '../state/hooks';
 import { update } from '../state/store';
 
-const APERTURES = apertureScale(3, 1, 64);
-const SPEEDS = [...shutterScale(3, 1 / 8000, 30), ...[45, 60, 90, 120, 180, 240, 300, 480, 600, 900, 1200, 1800, 3600].map((s) => sp(s, s))];
-const ISOS = isoScale(3, 6, 25600);
+const BULB_TIMES = [1, 2, 4, 8, 15, 30, 60, 120, 240, 480, 900, 1800, 3600];
+
+/** Only what this camera can set: its lens apertures, its marked speeds (+ Bulb times if it has B), its ISO range. */
+function cameraScales(camera: CameraProfile | null, ei: number) {
+  if (!camera) return { aps: [] as Aperture[], speeds: [] as { s: ShutterSpeed; bulb: boolean }[], isos: [] as number[] };
+  const aps = sortedApertures(camera);
+  const timedSpeeds = sortedSpeeds(camera);
+  const slowest = timedSpeeds.at(-1)?.exact ?? 0;
+  const speeds = [
+    ...timedSpeeds.map((x) => ({ s: x, bulb: false })),
+    ...(camera.bulb ? BULB_TIMES.filter((t) => t > slowest * 1.05).map((t) => ({ s: sp(t, t), bulb: true })) : []),
+  ];
+  // ISO: what the camera accepts, and within 3 stops of the loaded film's EI (the meter app should be set to it).
+  const isos = isoScale(3, Math.max(camera.isoMin, ei / 8), Math.min(camera.isoMax, ei * 8));
+  return { aps, speeds, isos: isos.length ? isos : isoScale(3, camera.isoMin, camera.isoMax) };
+}
 
 type Stage = 'goal' | 'reading' | 'result';
 
@@ -66,10 +82,17 @@ export function Shoot({ goTo }: { goTo: (tab: 'profiles' | 'sessions') => void }
   const goal: Goal | null = doc.goal;
   const goalLabel = goal === 'other' && doc.customGoal ? doc.customGoal : goalName(goal);
 
+  const scales = useMemo(() => cameraScales(camera, workingEI), [camera, workingEI]);
+  // Snap remembered values to this camera's settings.
+  const apSel = scales.aps.find((a) => a.nominal === aperture) ?? nearest(scales.aps, aperture, (a) => a.nominal);
+  const spSel = scales.speeds.find((x) => x.s.nominal === seconds) ?? nearest(scales.speeds, seconds, (x) => x.s.nominal);
+  const isoSel = scales.isos.includes(iso) ? iso : (nearest(scales.isos, iso, (v) => v) ?? iso);
+
   const result = useMemo(() => {
-    if (!camera) return null;
-    const ap = APERTURES.find((a) => a.nominal === aperture) ?? APERTURES[0]!;
-    const t = SPEEDS.find((s) => s.nominal === seconds)?.exact ?? seconds;
+    if (!camera || !apSel || !spSel) return null;
+    const ap = apSel;
+    const t = spSel.s.exact;
+    const iso = isoSel;
     const ev100 = ev100Of(ap.exact, t, exactISO(iso));
     const inputs: ExposureInputs = { ev100, compensation: comp, filterStops: nd, bellowsStops: 0, workingEI };
     const cre = creative(goal, camera, film, inputs, prefs.increment, prefs.astroRule);
@@ -83,7 +106,7 @@ export function Shoot({ goTo }: { goTo: (tab: 'profiles' | 'sessions') => void }
     });
     const eq = equivalents(camera, inputs, workingEI, 0.5);
     return { ev100, inputs, cre, straight, eq };
-  }, [camera, film, workingEI, iso, seconds, aperture, comp, nd, goal, prefs.increment, prefs.astroRule]);
+  }, [camera, film, workingEI, isoSel, apSel, spSel, comp, nd, goal, prefs.increment, prefs.astroRule]);
 
   if (!camera) return <Notice>Add a camera in Profiles first.</Notice>;
 
@@ -197,13 +220,16 @@ export function Shoot({ goTo }: { goTo: (tab: 'profiles' | 'sessions') => void }
           </button>
           <h1 className="font-display text-[26px] font-semibold leading-tight">What did your light meter give you?</h1>
         </div>
-        <p className="text-sm text-muted">Enter the three values exactly as your meter app shows them. Its ISO doesn't need to match your film; Zone Ten converts it.</p>
+        <p className="text-sm text-muted">
+          Only the {camera.name}'s settings are listed. Set your meter app to the same ISO as your film and pick the matching shutter speed and f-stop; if
+          your meter shows a value in between, pick the nearest one here.
+        </p>
         <div className="grid grid-cols-3 gap-2">
-          <BigSelect label="ISO" value={iso} onChange={setIso} options={ISOS.map((v) => ({ value: v, label: fmtISO(v) }))} />
-          <BigSelect label="Shutter" value={seconds} onChange={setSeconds} options={SPEEDS.map((s) => ({ value: s.nominal, label: fmtTime(s.nominal) }))} />
-          <BigSelect label="f-stop" value={aperture} onChange={setAperture} options={APERTURES.map((a) => ({ value: a.nominal, label: apLabel(a) }))} />
+          <BigSelect label="ISO" value={isoSel} onChange={setIso} options={scales.isos.map((v) => ({ value: v, label: fmtISO(v) }))} />
+          <BigSelect label="Shutter" value={spSel?.s.nominal ?? seconds} onChange={setSeconds} options={scales.speeds.map((x) => ({ value: x.s.nominal, label: x.bulb ? `B ${fmtTime(x.s.nominal)}` : fmtTime(x.s.nominal) }))} />
+          <BigSelect label="f-stop" value={apSel?.nominal ?? aperture} onChange={setAperture} options={scales.aps.map((a) => ({ value: a.nominal, label: apLabel(a) }))} />
         </div>
-        {iso !== workingEI && (
+        {isoSel !== workingEI && scales.isos.includes(workingEI) && (
           <button type="button" className="text-sm text-accent underline" onClick={() => setIso(workingEI)}>
             Set meter ISO to my film's EI {fmtISO(workingEI)}
           </button>
@@ -218,7 +244,7 @@ export function Shoot({ goTo }: { goTo: (tab: 'profiles' | 'sessions') => void }
           className="w-full"
           onClick={() => {
             update((d) => {
-              d.prefs.lastMeter = { iso, seconds, aperture };
+              d.prefs.lastMeter = { iso: isoSel, seconds: spSel?.s.nominal ?? seconds, aperture: apSel?.nominal ?? aperture };
             });
             setPicked(null);
             setSaved(false);
@@ -244,7 +270,7 @@ export function Shoot({ goTo }: { goTo: (tab: 'profiles' | 'sessions') => void }
           <ArrowLeft size={18} />
         </button>
         <div className="text-sm text-muted">
-          Your meter: <span className="text-fg tnum">{apLabel(APERTURES.find((a) => a.nominal === aperture)!)} · {fmtTime(seconds)} · ISO {fmtISO(iso)}</span>
+          Your meter: <span className="text-fg tnum">{apSel ? apLabel(apSel) : ''} · {spSel?.bulb ? 'B ' : ''}{fmtTime(spSel?.s.nominal ?? seconds)} · ISO {fmtISO(isoSel)}</span>
         </div>
       </div>
 
@@ -297,7 +323,7 @@ export function Shoot({ goTo }: { goTo: (tab: 'profiles' | 'sessions') => void }
                   boxSpeed: film ? boxSpeedLabel(film) : '—',
                   workingEI,
                   ev100: result.ev100,
-                  metered: `Meter: f/${aperture} · ${fmtTime(seconds)} · ISO ${fmtISO(iso)}`,
+                  metered: `Meter: ${apSel ? apLabel(apSel) : ''} · ${fmtTime(spSel?.s.nominal ?? seconds)} · ISO ${fmtISO(isoSel)}`,
                   aperture: apLabel(chosen.aperture),
                   shutter: shutterLabel(chosen.shutter),
                   compensation: comp,

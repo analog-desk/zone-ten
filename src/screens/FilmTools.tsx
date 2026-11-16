@@ -116,15 +116,24 @@ function FilmSelect({ value, onChange }: { value: FilmStock | null; onChange: (s
   );
 }
 
-const TIME_CHOICES = [...shutterScale(3, 1 / 1000, 30).map((s) => s.exact), 45, 60, 90, 120, 180, 240, 300, 480, 600, 900, 1200, 1800, 3600];
+const BULB_TIMES = [1, 2, 4, 8, 15, 30, 45, 60, 90, 120, 180, 240, 300, 480, 600, 900, 1200, 1800, 3600];
 
 function TimeSelect({ label, value, onChange }: { label: string; value: number; onChange: (v: number) => void }) {
+  const { camera } = useShooting();
+  // The active camera's marked speeds, then Bulb times beyond its slowest speed.
+  const marked = camera ? [...camera.speeds].sort((a, b) => a.exact - b.exact) : shutterScale(1, 1 / 1000, 1);
+  const slowest = marked.at(-1)?.exact ?? 0;
+  const choices = [
+    ...marked.map((s) => ({ v: s.exact, label: fmtTime(s.nominal) })),
+    ...(!camera || camera.bulb ? BULB_TIMES.filter((t) => t > slowest * 1.05).map((t) => ({ v: t, label: `B ${fmtTime(t)}` })) : []),
+  ];
+  const current = choices.reduce((best, c) => (Math.abs(Math.log2(c.v / value)) < Math.abs(Math.log2(best.v / value)) ? c : best), choices[0]!);
   return (
     <Field label={label}>
-      <select className={inputClass} value={value} onChange={(e) => onChange(Number(e.target.value))}>
-        {TIME_CHOICES.map((t) => (
-          <option key={t} value={t}>
-            {fmtTime(t)}
+      <select className={inputClass} value={current.v} onChange={(e) => onChange(Number(e.target.value))}>
+        {choices.map((c) => (
+          <option key={c.v} value={c.v}>
+            {c.label}
           </option>
         ))}
       </select>
