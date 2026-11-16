@@ -16,7 +16,6 @@ import {
   reciprocityText,
   sortedApertures,
   sortedSpeeds,
-  sp,
   type Aperture,
   type BulbGroup,
   type CameraProfile,
@@ -35,7 +34,6 @@ const DURATIONS: Record<string, number[]> = {
   painting: [15, 30, 60, 120, 240],
   fireworks: [2, 4, 6, 8, 15],
 };
-const BULB_TIMES = [1, 2, 4, 8, 15, 30, 60, 120, 240, 480];
 
 export function BulbPlanner({
   camera,
@@ -68,11 +66,8 @@ export function BulbPlanner({
 
   // Optional meter reading (whatever the meter can manage, e.g. wide open at ISO 3200).
   const aps = sortedApertures(camera);
-  const speeds = useMemo(() => {
-    const t = sortedSpeeds(camera);
-    const slowest = t.at(-1)?.exact ?? 0;
-    return [...t.map((s) => ({ v: s.exact, label: fmtTime(s.nominal) })), ...BULB_TIMES.filter((x) => x > slowest * 1.05).map((x) => ({ v: sp(x, x).exact, label: fmtTime(x) }))];
-  }, [camera]);
+  // The meter's reading uses the camera's marked speeds only.
+  const speeds = useMemo(() => sortedSpeeds(camera).map((s) => ({ v: s.exact, label: fmtTime(s.nominal) })), [camera]);
   const isos = isoScale(3, Math.max(6, ei / 16), Math.min(25600, ei * 16));
   const [mIso, setMIso] = useState(ei);
   const [mT, setMT] = useState(speeds.find((x) => x.v >= 1)?.v ?? speeds.at(-1)!.v);
