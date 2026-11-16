@@ -3,7 +3,7 @@ import { Aperture, Camera, Film, NotebookPen, Settings as Gear, Wrench } from 'l
 import { Sheet, cx } from './components/ui';
 import { FilmLibrary } from './screens/FilmLibrary';
 import { FilmTools } from './screens/FilmTools';
-import { Meter } from './screens/Meter';
+import { Shoot } from './screens/Shoot';
 import { Onboarding } from './screens/Onboarding';
 import { Profiles } from './screens/Profiles';
 import { Sessions } from './screens/Sessions';
@@ -13,7 +13,7 @@ import { loadDoc, useDoc, useLoaded } from './state/store';
 
 type Tab = 'meter' | 'profiles' | 'films' | 'tools' | 'sessions';
 const TABS: { id: Tab; label: string; icon: typeof Camera }[] = [
-  { id: 'meter', label: 'Meter', icon: Aperture },
+  { id: 'meter', label: 'Shoot', icon: Aperture },
   { id: 'profiles', label: 'Profiles', icon: Camera },
   { id: 'films', label: 'Film Library', icon: Film },
   { id: 'tools', label: 'Film Tools', icon: Wrench },
@@ -56,7 +56,7 @@ export function App() {
         </div>
       </header>
       <main className="flex-1 pb-24">
-        {tab === 'meter' && <Meter goTo={setTab} />}
+        {tab === 'meter' && <Shoot goTo={setTab} />}
         {tab === 'profiles' && <Profiles />}
         {tab === 'films' && <FilmLibrary />}
         {tab === 'tools' && <FilmTools />}

@@ -11,7 +11,6 @@ import {
   displayName,
   fmtISO,
   fmtTime,
-  goalName,
   processingLabel,
   referenceSpeed,
   sortedApertures,
@@ -20,13 +19,12 @@ import {
   type CameraProfile,
   type FilmFormat,
   type FilmStock,
-  type Goal,
 } from '../engine';
 import { CameraArt } from '../components/art';
 import { CameraEditor } from '../components/CameraEditor';
-import { EIPicker, FilmPicker, FormatPicker, GoalGrid } from '../components/pickers';
+import { EIPicker, FilmPicker, FormatPicker } from '../components/pickers';
 import { Button, Card, Label, Row, Sheet } from '../components/ui';
-import { cameraFromTemplate, loadRoll, saveCamera, setGoal } from '../state/actions';
+import { cameraFromTemplate, loadRoll, saveCamera } from '../state/actions';
 import { allStocks, catalogOf, update, useDoc } from '../state/store';
 
 export function CameraSpecs({ c }: { c: CameraProfile }) {
@@ -75,9 +73,7 @@ type Step = 1 | 2 | 3 | 4 | 5 | 6;
 
 export function Onboarding() {
   const doc = useDoc((d) => d);
-  const [step, setStep] = useState<Step>(1);
-  const [goal, setGoalLocal] = useState<Goal | null>(doc.goal);
-  const [customGoal, setCustomGoal] = useState(doc.customGoal);
+  const [step, setStep] = useState<Step>(2);
   const [camera, setCamera] = useState<CameraProfile | null>(null);
   const [editing, setEditing] = useState(false);
   const [film, setFilm] = useState<FilmStock | null>(null);
@@ -102,7 +98,6 @@ export function Onboarding() {
   };
   const finish = () => {
     if (!camera || !film) return;
-    setGoal(goal, customGoal);
     saveCamera(camera);
     loadRoll({ camera, stock: film, format, workingEI: ei, processing: 'Lab', pushPull, notes: '' });
     update((d) => {
@@ -111,25 +106,25 @@ export function Onboarding() {
   };
 
   const titles: Record<Step, string> = {
-    1: 'What are you shooting today?',
+    1: '',
     2: 'Which camera are you using?',
     3: 'Are these your camera settings?',
     4: 'What film are you using?',
     5: 'Box speed and working EI',
-    6: 'Ready to meter',
+    6: 'Your setup',
   };
 
   return (
     <div className="safe-top mx-auto flex min-h-full max-w-xl flex-col px-4 pb-28">
       <header className="flex items-center gap-2 py-4">
-        {step > 1 && (
+        {step > 2 && (
           <button type="button" onClick={() => setStep((s) => (s - 1) as Step)} className="flex size-10 items-center justify-center rounded-full bg-raise" aria-label="Back">
             <ArrowLeft size={18} />
           </button>
         )}
         <div className="mr-auto">
           <div className="font-display text-sm font-semibold tracking-wide text-accent">ZONE TEN</div>
-          <div className="text-xs text-dim">Step {step} of 6</div>
+          <div className="text-xs text-dim">Setup {step - 1} of 5</div>
         </div>
         {doc.cameras.length > 0 && (
           <button
@@ -146,29 +141,6 @@ export function Onboarding() {
         )}
       </header>
       <h1 className="mb-4 font-display text-[28px] font-semibold leading-tight">{titles[step]}</h1>
-
-      {step === 1 && (
-        <>
-          <GoalGrid value={goal} customGoal={customGoal} onPick={setGoalLocal} onCustom={setCustomGoal} />
-          <div className="fixed inset-x-0 bottom-0 z-10 border-t border-line bg-bg/95 px-4 py-3 backdrop-blur safe-bottom">
-            <div className="mx-auto flex max-w-xl gap-2">
-              <Button
-                kind="secondary"
-                className="flex-1"
-                onClick={() => {
-                  setGoalLocal(null);
-                  setStep(2);
-                }}
-              >
-                Skip · standard metering
-              </Button>
-              <Button kind="primary" className="flex-1" disabled={!goal} onClick={() => setStep(2)}>
-                Continue
-              </Button>
-            </div>
-          </div>
-        </>
-      )}
 
       {step === 2 && (
         <div className="space-y-3">
@@ -285,7 +257,6 @@ export function Onboarding() {
           <Card>
             <Label>Shooting configuration</Label>
             <div className="mt-2">
-              <Row label="Goal" value={goal === 'other' && customGoal ? customGoal : goalName(goal)} />
               <Row label="Camera" value={camera.name} />
               <Row label="Lens" value={camera.lens.name} />
               <Row label="Film" value={displayName(film)} />
@@ -296,7 +267,7 @@ export function Onboarding() {
             </div>
           </Card>
           <Button kind="primary" className="mt-4 w-full" onClick={finish}>
-            Start metering
+            Done
           </Button>
         </>
       )}

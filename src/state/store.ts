@@ -81,6 +81,8 @@ export interface Prefs {
   /** Phone lens f-number for live metering (learned from photo EXIF, editable). */
   phoneFNumber: number | null;
   activeSessionId: string | null;
+  /** Last reading entered from the external light meter. */
+  lastMeter: { iso: number; seconds: number; aperture: number } | null;
 }
 
 export interface DBDoc {
@@ -131,6 +133,7 @@ export const emptyDoc = (): DBDoc => ({
     incidentAccessory: '',
     phoneFNumber: null,
     activeSessionId: null,
+    lastMeter: null,
   },
 });
 

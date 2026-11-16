@@ -232,9 +232,9 @@ function ZoneTool() {
   if (!frame)
     return (
       <div className="space-y-3">
-        <Notice>Take a metering photo on the Meter tab first, then come back: you can tap areas of that photo here to place them on zones.</Notice>
+        <Notice>Spot meter the important areas with your light meter app (shadows, mid-tones, highlights), enter each reading here as EV₁₀₀, then place one on a zone.</Notice>
         <Card>
-          <Field label="Or enter a spot reading (EV₁₀₀)">
+          <Field label="Spot reading (EV₁₀₀)" hint="EV₁₀₀ = log₂(f²/t) − log₂(ISO/100); the Shoot tab shows it for any reading">
             <div className="flex gap-2">
               <input className={inputClass} inputMode="decimal" value={manual} onChange={(e) => setManual(e.target.value)} />
               <Button
