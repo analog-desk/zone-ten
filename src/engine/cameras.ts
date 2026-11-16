@@ -7,6 +7,7 @@ import type { CameraProfile } from './types';
 export const PENTAX_LX = 'pentax-lx';
 export const CANON_AE1P = 'canon-ae1-program';
 export const YASHICA_A = 'yashica-a';
+export const FUJI_XT5 = 'fujifilm-x-t5';
 export const GENERIC_35 = 'generic-35mm';
 export const GENERIC_DIGITAL = 'generic-digital';
 
@@ -84,6 +85,38 @@ export function yashicaA(): CameraProfile {
   };
 }
 
+/** Fujifilm X-T5 with a 23mm f/2.8 lens. Digital: ISO can change every shot, so the app may suggest ISO. */
+export function fujiXT5(): CameraProfile {
+  return {
+    id: FUJI_XT5,
+    templateId: FUJI_XT5,
+    name: 'Fujifilm X-T5',
+    format: 'Digital',
+    negativeSize: 'APS-C (23.5×15.6 mm)',
+    diagonalMM: 28.2,
+    mount: 'Fujifilm X',
+    modes: ['program', 'aperturePriority', 'shutterPriority', 'manual'],
+    // Aperture ring in ⅓ stops from f/2.8; f/16 minimum is the usual for compact X-mount primes — edit if yours differs.
+    lens: { name: '23mm f/2.8', focalLength: 23, focalConfirmed: true, fixed: false, apertures: apertureScale(3, 2.8, 16) },
+    // Mechanical shutter in ⅓ stops, 1/4000 – 30 s; longer exposures on T (to 15 min) or B.
+    speeds: shutterScale(3, 1 / 4000, 30),
+    mechanicalNotes: [
+      'Mechanical shutter 1/4000 s – 15 min (T mode for times past 30 s); electronic shutter to 1/180000 s.',
+      'Bulb up to 60 minutes.',
+    ],
+    bulb: true,
+    flashSync: 1 / 250,
+    isoMin: 125,
+    isoMax: 12800,
+    builtInMeter: true,
+    isoPerShot: true,
+    notes: [
+      'ISO 125–12800 (standard). Extended ISO 64–100 and 25600–51200 is available on the camera but not used for suggestions.',
+      'Minimum aperture f/16 assumed for the 23mm f/2.8 — edit the lens if it stops down further.',
+    ],
+  };
+}
+
 export function generic35(): CameraProfile {
   return {
     id: GENERIC_35,
@@ -128,8 +161,8 @@ export function genericDigital(): CameraProfile {
   };
 }
 
-export const PRIMARY_TEMPLATES = [pentaxLX, canonAE1Program, yashicaA];
-export const ALL_TEMPLATES = [pentaxLX, canonAE1Program, yashicaA, generic35, genericDigital];
+export const PRIMARY_TEMPLATES = [pentaxLX, canonAE1Program, yashicaA, fujiXT5];
+export const ALL_TEMPLATES = [pentaxLX, canonAE1Program, yashicaA, fujiXT5, generic35, genericDigital];
 
 export const cropFactor = (c: CameraProfile) => 43.27 / c.diagonalMM;
 

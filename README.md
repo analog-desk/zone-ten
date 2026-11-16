@@ -1,12 +1,12 @@
 # Vaaro Light Meter
 
-A mobile-first exposure companion for film photographers, set up for a **Pentax LX**, **Canon AE-1 Program** and
-**Yashica A** (plus any camera you add). Meter with your usual light meter app, then:
+A mobile-first exposure companion for film photographers, set up for a **Pentax LX**, **Canon AE-1 Program**, **Yashica A** and **Fujifilm X-T5** (23mm f/2.8)
+(plus any camera you add). Meter with your usual light meter app, then:
 
 1. **What are you shooting today?** Pick one of 16 goals (light trails, portraits, landscape, astro…).
 2. **What did your light meter give you?** Enter its ISO, shutter speed and f-stop.
 3. **Result:** the same exposure, re-balanced for your goal, converted to your film's EI, and limited to settings your
-   camera can actually make. It also gives alternatives, bracketing, ND suggestions, film-specific reciprocity, a Bulb
+   camera can actually make. It also gives alternatives, bracketing, film-specific reciprocity, a Bulb
    timer and goal tips. Readings can be saved to sessions and exported as PDF.
 
 React 19 · TypeScript (strict) · Tailwind CSS 4 · Vite · Vitest. Offline-first PWA; all data stays on the device.

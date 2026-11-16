@@ -1,7 +1,6 @@
 import { useMemo, useState, type PointerEvent } from 'react';
-import { ArrowLeft, ChevronRight, Clock, Film, Hourglass, Layers, Moon, Ruler, Sigma, Timer } from 'lucide-react';
+import { ArrowLeft, ChevronRight, Film, Hourglass, Layers, Moon, Ruler, Sigma, Timer } from 'lucide-react';
 import {
-  ND_FILTERS,
   ZONE_DESCRIPTIONS,
   ZONE_NUMERALS,
   analyseContrast,
@@ -17,7 +16,6 @@ import {
   magnificationFromExtension,
   maxStarPointSeconds,
   optionLabel,
-  planLongExposure,
   reciprocityText,
   searchFilms,
   shutterScale,
@@ -35,12 +33,11 @@ import { Button, Card, Field, Label, Notice, Row, Segmented, Stepper, cx, inputC
 import { useShooting } from '../state/hooks';
 import { areaEV, useCurrentFrame } from '../state/measurement';
 
-type Tool = 'rate' | 'reciprocity' | 'long' | 'timer' | 'zone' | 'astro' | 'bellows' | 'equiv';
+type Tool = 'rate' | 'reciprocity' | 'timer' | 'zone' | 'astro' | 'bellows' | 'equiv';
 
 const TOOLS: { id: Tool; name: string; desc: string; icon: typeof Film }[] = [
   { id: 'rate', name: 'Rate My Film', desc: 'Working EI vs box speed, push/pull intent', icon: Film },
   { id: 'reciprocity', name: 'Reciprocity', desc: 'Film-specific long-exposure correction', icon: Hourglass },
-  { id: 'long', name: 'Long exposure & ND', desc: 'Calculated vs adjusted time, Bulb', icon: Clock },
   { id: 'timer', name: 'Bulb timer', desc: 'Countdown with tones', icon: Timer },
   { id: 'zone', name: 'Zone System', desc: 'Place tones, check contrast, histogram', icon: Layers },
   { id: 'astro', name: 'Star points', desc: '500-rule limit for your lens and format', icon: Moon },
@@ -63,7 +60,6 @@ export function FilmTools() {
           </div>
           {tool === 'rate' && <RateTool />}
           {tool === 'reciprocity' && <ReciprocityTool />}
-          {tool === 'long' && <LongExposureTool />}
           {tool === 'timer' && (
             <Card>
               <BulbTimer initialSeconds={30} />
@@ -168,57 +164,6 @@ function ReciprocityTool() {
             return <Row key={m} label={fmtTime(m)} value={x.basis === 'unpublished' ? 'no data' : `${fmtTime(x.corrected)}${x.basis === 'extrapolated' ? ' (extrap.)' : ''}`} />;
           })}
           <p className="mt-2 text-xs text-dim">Edit a custom copy of this film in the library to enter your own curve.</p>
-        </Card>
-      )}
-    </div>
-  );
-}
-
-function LongExposureTool() {
-  const { film: loaded, camera } = useShooting();
-  const [film, setFilm] = useState<FilmStock | null>(loaded);
-  const [base, setBase] = useState(1 / 8);
-  const [nd, setNd] = useState(ND_FILTERS[8]!.stops);
-  const [timer, setTimer] = useState(false);
-  const plan = planLongExposure(base, nd, film, camera);
-  return (
-    <div className="space-y-3">
-      <TimeSelect label="Metered time without filter" value={base} onChange={setBase} />
-      <Field label="ND filter">
-        <select className={inputClass} value={nd} onChange={(e) => setNd(Number(e.target.value))}>
-          <option value={0}>None</option>
-          {ND_FILTERS.map((f) => (
-            <option key={f.name} value={f.stops}>
-              {f.name} — {f.stops.toFixed(f.stops % 1 ? 1 : 0)} stops
-            </option>
-          ))}
-        </select>
-      </Field>
-      <FilmSelect value={film} onChange={setFilm} />
-      <Card>
-        <Row label="Calculated time" value={fmtTime(plan.calculated)} />
-        <Row label="Reciprocity-adjusted" value={fmtTime(plan.adjusted)} tone={plan.reciprocity?.basis === 'unpublished' || plan.reciprocity?.basis === 'extrapolated' ? 'warn' : 'ok'} />
-        {plan.reciprocity && <p className="mt-1 text-sm text-muted">{reciprocityText(plan.reciprocity)}</p>}
-        <div className="mt-2 rounded-xl bg-raise p-2 text-sm">
-          {plan.requiresBulb ? (
-            <>Set the {camera?.name ?? 'camera'} to B and expose for {fmtTime(plan.adjusted)}.</>
-          ) : plan.marked ? (
-            <>
-              Use the marked {fmtTime(plan.marked.nominal)} ({plan.markedError !== undefined && Math.abs(plan.markedError) >= 0.05 ? `${fmtStops(plan.markedError)} stop` : 'exact'}).
-            </>
-          ) : (
-            <>No marked speed fits; use B.</>
-          )}
-        </div>
-        {plan.adjusted >= 1 && (
-          <Button kind="primary" className="mt-3 w-full" onClick={() => setTimer(true)}>
-            <Timer size={16} /> Time {fmtTime(plan.adjusted)}
-          </Button>
-        )}
-      </Card>
-      {timer && (
-        <Card>
-          <BulbTimer key={plan.adjusted} initialSeconds={plan.adjusted} />
         </Card>
       )}
     </div>

@@ -2,7 +2,6 @@ import { useMemo, useState } from 'react';
 import { ArrowLeft, Camera, Check, ChevronDown, Film, Save, Target, Timer } from 'lucide-react';
 import {
   GOALS,
-  ND_FILTERS,
   apLabel,
   boxSpeedLabel,
   correctReciprocity,
@@ -40,7 +39,7 @@ import { BulbPlanner } from '../components/BulbPlanner';
 import { BulbTimer } from '../components/BulbTimer';
 import { GoalGrid } from '../components/pickers';
 import { RollManager } from '../components/RollSheet';
-import { Button, Card, ErrorBadge, Label, Notice, Row, Sheet, Stepper, cx, inputClass, vibrate } from '../components/ui';
+import { Button, Card, ErrorBadge, Label, Notice, Row, Sheet, Stepper, cx, vibrate } from '../components/ui';
 import { saveReading, setActiveCamera, setGoal } from '../state/actions';
 import { useShooting } from '../state/hooks';
 import { update } from '../state/store';
@@ -54,7 +53,8 @@ function cameraScales(camera: CameraProfile | null, ei: number) {
   const aps = sortedApertures(camera);
   const speeds = sortedSpeeds(camera).map((x) => ({ s: x, bulb: false }));
   // ISO: what the camera accepts, and within 3 stops of the loaded film's EI (the meter app should be set to it).
-  const isos = isoScale(3, Math.max(camera.isoMin, ei / 8), Math.min(camera.isoMax, ei * 8));
+  // Film: within 3 stops of the loaded film's EI. Digital: the camera's whole standard ISO range.
+  const isos = camera.isoPerShot ? isoScale(3, camera.isoMin, camera.isoMax) : isoScale(3, Math.max(camera.isoMin, ei / 8), Math.min(camera.isoMax, ei * 8));
   return { aps, speeds, isos: isos.length ? isos : isoScale(3, camera.isoMin, camera.isoMax) };
 }
 
@@ -73,7 +73,6 @@ export function Shoot({ goTo }: { goTo: (tab: 'profiles' | 'sessions') => void }
   const [seconds, setSeconds] = useState(r.seconds);
   const [aperture, setAperture] = useState(r.aperture);
   const [comp, setComp] = useState(0);
-  const [nd, setNd] = useState(0);
 
   const goal: Goal | null = doc.goal;
   const goalLabel = goal === 'other' && doc.customGoal ? doc.customGoal : goalName(goal);
@@ -91,25 +90,26 @@ export function Shoot({ goTo }: { goTo: (tab: 'profiles' | 'sessions') => void }
     const t = spSel.s.exact;
     const iso = isoSel;
     const ev100 = ev100Of(ap.exact, t, exactISO(iso));
-    const inputs: ExposureInputs = { ev100, compensation: comp, filterStops: nd, bellowsStops: 0, workingEI };
-    const cre = creative(goal, camera, film, inputs, prefs.increment, prefs.astroRule);
-    // "Straight from your meter": the meter's aperture (nearest your lens has), shutter worked out for your film's EI.
+    const inputs: ExposureInputs = { ev100, compensation: comp, filterStops: 0, bellowsStops: 0, workingEI: camera.isoPerShot ? iso : workingEI };
+    const cre = creative(goal, camera, camera.isoPerShot ? null : film, inputs, prefs.increment, prefs.astroRule);
+    // "Straight from your meter": the meter's aperture (nearest your lens has), shutter worked out for your film's EI
+    // (digital: at the meter's ISO).
     const camAp = nearest(camera.lens.apertures, ap.exact, (a) => a.exact) ?? camera.lens.apertures[0]!;
     const firstSpeed = camera.speeds[0];
     const straight = solve({ camera, increment: prefs.increment, film }, inputs, locksFor('aperturePriority'), {
-      iso: workingEI,
+      iso: camera.isoPerShot ? iso : workingEI,
       aperture: camAp,
       shutter: firstSpeed ? timed(firstSpeed) : { kind: 'bulb', seconds: 1 },
     });
-    const eq = equivalents(camera, inputs, workingEI, 0.5);
+    const eq = equivalents(camera, inputs, camera.isoPerShot ? cre.option.iso : workingEI, 0.5);
     return { ev100, inputs, cre, straight, eq };
-  }, [camera, film, workingEI, isoSel, apSel, spSel, comp, nd, goal, prefs.increment, prefs.astroRule]);
+  }, [camera, film, workingEI, isoSel, apSel, spSel, comp, goal, prefs.increment, prefs.astroRule]);
 
   if (!camera) return <Notice>Add a camera in Profiles first.</Notice>;
 
   const chosen = picked ?? result?.cre.option ?? null;
   const chosenT = chosen ? shutterSeconds(chosen.shutter) : 0;
-  const recip = chosen && film && chosenT >= 1 ? correctReciprocity(chosenT, film.reciprocity) : null;
+  const recip = chosen && film && !camera.isoPerShot && chosenT >= 1 ? correctReciprocity(chosenT, film.reciprocity) : null;
   const handheld = handheldLimit(camera);
 
   const chips = (
@@ -117,9 +117,15 @@ export function Shoot({ goTo }: { goTo: (tab: 'profiles' | 'sessions') => void }
       <button type="button" onClick={() => setSheet('camera')} className="flex min-h-9 shrink-0 items-center gap-1.5 rounded-full border border-line bg-surface px-3 text-sm font-semibold">
         <Camera size={15} className="text-accent" /> {camera.name} <ChevronDown size={14} className="text-dim" />
       </button>
-      <button type="button" onClick={() => setSheet('roll')} className="flex min-h-9 shrink-0 items-center gap-1.5 rounded-full border border-line bg-surface px-3 text-sm font-semibold">
-        <Film size={15} className="text-accent" /> {roll ? `${roll.stock.name} · EI ${fmtISO(roll.workingEI)}` : 'Load film'}
-      </button>
+      {camera.isoPerShot ? (
+        <span className="flex min-h-9 shrink-0 items-center gap-1.5 rounded-full border border-line bg-surface px-3 text-sm font-semibold">
+          <Film size={15} className="text-accent" /> Digital · ISO {fmtISO(camera.isoMin)}–{fmtISO(camera.isoMax)}
+        </span>
+      ) : (
+        <button type="button" onClick={() => setSheet('roll')} className="flex min-h-9 shrink-0 items-center gap-1.5 rounded-full border border-line bg-surface px-3 text-sm font-semibold">
+          <Film size={15} className="text-accent" /> {roll ? `${roll.stock.name} · EI ${fmtISO(roll.workingEI)}` : 'Load film'}
+        </button>
+      )}
       {stage !== 'goal' && (
         <button type="button" onClick={() => setStage('goal')} className="flex min-h-9 shrink-0 items-center gap-1.5 rounded-full border border-line bg-surface px-3 text-sm font-semibold">
           <Target size={15} className="text-accent" /> {goalLabel}
@@ -211,7 +217,7 @@ export function Shoot({ goTo }: { goTo: (tab: 'profiles' | 'sessions') => void }
     return (
       <div className="space-y-3 px-3 pb-6 pt-2">
         {chips}
-        <BulbPlanner camera={camera} film={film} roll={roll} ei={workingEI} goal={goal} goalLabel={goalLabel} astroRule={prefs.astroRule} onBack={() => setStage('reading')} />
+        <BulbPlanner camera={camera} film={camera.isoPerShot ? null : film} roll={camera.isoPerShot ? null : roll} ei={workingEI} goal={goal} goalLabel={goalLabel} astroRule={prefs.astroRule} onBack={() => setStage('reading')} />
         {sheets}
       </div>
     );
@@ -242,7 +248,7 @@ export function Shoot({ goTo }: { goTo: (tab: 'profiles' | 'sessions') => void }
           />
           <BigSelect label="f-stop" value={apSel?.nominal ?? aperture} onChange={setAperture} options={scales.aps.map((a) => ({ value: a.nominal, label: apLabel(a) }))} />
         </div>
-        {isoSel !== workingEI && scales.isos.includes(workingEI) && (
+        {!camera.isoPerShot && isoSel !== workingEI && scales.isos.includes(workingEI) && (
           <button type="button" className="text-sm text-accent underline" onClick={() => setIso(workingEI)}>
             Set meter ISO to my film's EI {fmtISO(workingEI)}
           </button>
@@ -300,13 +306,13 @@ export function Shoot({ goTo }: { goTo: (tab: 'profiles' | 'sessions') => void }
           </div>
         </div>
         <div className="mt-2 flex flex-wrap items-center gap-2 text-sm text-muted">
-          <span>EI {fmtISO(workingEI)}</span>
-          {film && <span>· {displayName(film)}</span>}
+          {camera.isoPerShot ? <span className="font-semibold text-fg">ISO {fmtISO(chosen.iso)}</span> : <span>EI {fmtISO(workingEI)}</span>}
+          {film && !camera.isoPerShot && <span>· {displayName(film)}</span>}
           <ErrorBadge stops={chosen.error} />
         </div>
         {isCreative && <p className="mt-2 text-sm">{cre.headline}.</p>}
         <p className="mt-1 text-xs text-dim">
-          Same light as your meter reading{comp || nd ? ' with your adjustments' : ''} — {describeStops(chosen.error)}.
+          Same light as your meter reading{comp ? ' with your compensation' : ''} — {describeStops(chosen.error)}.
         </p>
         {recip && recip.basis !== 'noCorrectionNeeded' && <p className={cx('mt-2 text-sm', recip.basis === 'published' ? 'text-caution' : 'text-critical')}>{reciprocityText(recip)}</p>}
         {chosenT > handheld * 1.05 && <p className="mt-1 text-sm text-caution">Use a tripod — {fmtTime(chosenT)} is too slow to hand-hold.</p>}
@@ -340,7 +346,7 @@ export function Shoot({ goTo }: { goTo: (tab: 'profiles' | 'sessions') => void }
                   aperture: apLabel(chosen.aperture),
                   shutter: shutterLabel(chosen.shutter),
                   compensation: comp,
-                  filterStops: nd,
+                  filterStops: 0,
                   meteringMode: 'External meter',
                   path: 'External light meter reading',
                   calibrationName: '—',
@@ -371,7 +377,6 @@ export function Shoot({ goTo }: { goTo: (tab: 'profiles' | 'sessions') => void }
         <div className="mt-2 space-y-1">
           <OptionRow label="Straight from your meter" o={straight.camera} on={!!picked && same(picked, straight.camera)} onPick={setPicked} />
           {cre.alternate && cre.alternateLabel && <OptionRow label={cre.alternateLabel} o={cre.alternate} on={!!picked && same(picked, cre.alternate)} onPick={setPicked} />}
-          {cre.nd && <OptionRow label={`With a ${Math.round(cre.nd.stops)}-stop ND filter`} o={cre.nd.option} on={false} onPick={() => setNd(cre.nd!.stops)} />}
         </div>
         <div className="mt-3 flex flex-wrap gap-1.5">
           {eq.map((o) => (
@@ -402,7 +407,7 @@ export function Shoot({ goTo }: { goTo: (tab: 'profiles' | 'sessions') => void }
         <button type="button" onClick={() => setTune((v) => !v)} className="flex w-full items-center justify-between py-1 text-left">
           <span className="font-semibold">Fine-tune</span>
           <span className="text-sm text-muted">
-            {comp ? `comp ${fmtStops(comp)}` : ''} {nd ? `· ND ${fmtStops(nd)}` : ''}
+            {comp ? `comp ${fmtStops(comp)}` : ''}
           </span>
           <ChevronDown size={16} className={cx('transition-transform', tune && 'rotate-180')} />
         </button>
@@ -413,18 +418,6 @@ export function Shoot({ goTo }: { goTo: (tab: 'profiles' | 'sessions') => void }
               <Stepper value={comp} onChange={(v) => { setComp(v); setPicked(null); }} step={1 / prefs.increment} min={-4} max={4} format={(v) => fmtStops(v)} />
             </div>
             <p className="text-xs text-dim">+ gives more exposure (e.g. snow, backlit faces, light skin); − gives less (dark subjects, night scenes, saturated slides).</p>
-            <label className="block text-sm">
-              <span className="text-muted">ND / filter on the lens</span>
-              <select className={cx(inputClass, 'mt-1')} value={nd} onChange={(e) => { setNd(Number(e.target.value)); setPicked(null); }}>
-                <option value={0}>None</option>
-                {ND_FILTERS.map((f) => (
-                  <option key={f.name} value={f.stops}>
-                    {f.name}
-                  </option>
-                ))}
-                {nd && !ND_FILTERS.some((f) => f.stops === nd) ? <option value={nd}>{fmtStops(nd)} stops</option> : null}
-              </select>
-            </label>
           </div>
         )}
       </Card>

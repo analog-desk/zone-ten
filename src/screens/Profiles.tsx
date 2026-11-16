@@ -55,6 +55,9 @@ export function Profiles() {
                 {sps[0] ? speedLabel(sps[0]) : '—'} – {sps.at(-1) ? speedLabel(sps.at(-1)!) : '—'}
                 {c.bulb ? ' + B' : ''} · {aps.length} apertures · ISO {fmtISO(c.isoMin)}–{fmtISO(c.isoMax)}
               </div>
+              {c.isoPerShot ? (
+                <div className="mt-3 rounded-xl border border-line bg-raise px-3 py-2 text-sm text-muted">Digital — ISO is chosen for each shot, no film to load.</div>
+              ) : (
               <button type="button" onClick={() => setRollFor(c)} className="mt-3 w-full rounded-xl border border-line bg-raise px-3 py-2 text-left text-sm">
                 {roll ? (
                   <>
@@ -65,6 +68,7 @@ export function Profiles() {
                   <span className="text-accent">Load film…</span>
                 )}
               </button>
+              )}
               <div className="mt-2 flex gap-2">
                 <Button kind="ghost" onClick={() => setEditing(c)}>
                   <Pencil size={15} /> Edit

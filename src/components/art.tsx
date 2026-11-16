@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import { CANON_AE1P, PENTAX_LX, YASHICA_A, fmtISO, isSheet, type FilmCategory, type FilmFormat, type FilmStock, type Goal } from '../engine';
+import { CANON_AE1P, FUJI_XT5, PENTAX_LX, YASHICA_A, fmtISO, isSheet, type FilmCategory, type FilmFormat, type FilmStock, type Goal } from '../engine';
 
 // Original illustrations drawn in SVG for this app (no photographs or third-party artwork).
 
@@ -355,6 +355,29 @@ export function CameraArt({ templateId, photo }: { templateId?: string; photo?: 
             <ellipse cx={76} cy={cy! - 4} rx={4} ry={3} fill="#fff" opacity={0.22} />
           </g>
         ))}
+      </svg>
+    );
+  }
+  if (templateId === FUJI_XT5) {
+    return (
+      <svg viewBox="0 0 160 100" className="block h-full w-full" aria-hidden>
+        {defs}
+        <rect width={160} height={100} fill="var(--color-raise)" />
+        {/* top dials */}
+        <rect x={34} y={24} width={20} height={9} rx={2} fill={chrome} />
+        <rect x={102} y={24} width={20} height={9} rx={2} fill={chrome} />
+        <rect x={60} y={28} width={10} height={6} rx={1.5} fill={chrome} />
+        {/* centre viewfinder hump */}
+        <path d="M64 34 L70 20 L90 20 L96 34 Z" fill={black} />
+        {/* body */}
+        <rect x={24} y={33} width={112} height={44} rx={7} fill={chrome} />
+        <rect x={24} y={39} width={112} height={34} fill={black} />
+        <rect x={120} y={38} width={13} height={36} rx={5} fill="#262626" />
+        {/* short 23mm lens */}
+        <circle cx={80} cy={58} r={19} fill={chrome} />
+        <circle cx={80} cy={58} r={16} fill={black} />
+        <circle cx={80} cy={58} r={10} fill="none" stroke="#3a3a3a" />
+        <ellipse cx={75} cy={53} rx={3.5} ry={2.5} fill="#fff" opacity={0.22} />
       </svg>
     );
   }

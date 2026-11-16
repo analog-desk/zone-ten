@@ -17,11 +17,12 @@ describe('bulb planner', () => {
     expect(lx.lens.apertures.some((a) => a.exact === p.main.aperture.exact)).toBe(true);
   });
 
-  it('suggests ND when too bright for the look', () => {
+  it('too bright for the look: smallest aperture, shorter time, no filters', () => {
     const p = E.planBulb({ shot: shot('street'), camera: lx, film: film('ilford-hp5-plus'), ei: 400, ev100: 7 });
-    expect(p.ndStops).toBeGreaterThanOrEqual(1);
-    expect(p.main.expose).toBeGreaterThanOrEqual(9);
     expect(p.main.aperture.nominal).toBe(22);
+    expect(p.main.expose).toBeLessThan(10);
+    expect(p.notes.join(' ')).toMatch(/brighter than this look/);
+    expect(p.notes.join(' ')).not.toMatch(/ND/);
   });
 
   it('star points use the 500 rule on the Yashica, wide open', () => {

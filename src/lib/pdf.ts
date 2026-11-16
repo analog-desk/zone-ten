@@ -29,7 +29,6 @@ export function readingLines(r: Reading): string[] {
   ];
   const adj: string[] = [];
   if (Math.abs(r.compensation) > 0.01) adj.push(`compensation ${fmtStops(r.compensation)}`);
-  if (Math.abs(r.filterStops) > 0.01) adj.push(`filter/close-up ${fmtStops(r.filterStops)} stops`);
   if (adj.length) lines.push(adj.join(' · '));
   if (r.reciprocity) lines.push(r.reciprocity);
   lines.push(`${r.path} · ${r.calibrationName} (${fmtStops(r.calibrationOffset)}) · goal: ${r.goal}`);

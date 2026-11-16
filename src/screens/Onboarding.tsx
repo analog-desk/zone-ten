@@ -186,7 +186,18 @@ export function Onboarding() {
             </div>
           </Card>
           <div className="mt-4 grid gap-2">
-            <Button kind="primary" onClick={() => setStep(4)}>
+            <Button
+              kind="primary"
+              onClick={() => {
+                if (camera.isoPerShot) {
+                  // Digital: no film to load — ISO is chosen per shot.
+                  saveCamera(camera);
+                  update((d) => {
+                    d.onboardingComplete = true;
+                  });
+                } else setStep(4);
+              }}
+            >
               Confirm camera
             </Button>
             <Button onClick={() => setEditing(true)}>Edit settings</Button>

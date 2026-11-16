@@ -204,7 +204,6 @@ export interface BulbPlan {
   /** Every camera aperture with its time (ambient modes). */
   alternatives: BulbStep[];
   bracket: { label: string; expose: number }[];
-  ndStops: number;
   notes: string[];
   starArcDegrees?: number;
   starLimit?: number;
@@ -249,7 +248,6 @@ export function planBulb(i: BulbInputs): BulbPlan {
   const aps = sortedApertures(camera);
   const sEV = settingsEV(i.ev100, ei);
   const notes: string[] = [];
-  let ndStops = 0;
   const inPref = aps.filter((a) => a.nominal >= shot.apertures[0] - 0.01 && a.nominal <= shot.apertures[1] + 0.01);
   const pool = inPref.length ? inPref : aps;
   const alternatives = aps.map((a) => step(a, timeFor(a.exact, sEV), film));
@@ -271,17 +269,9 @@ export function planBulb(i: BulbInputs): BulbPlan {
     if (i.aperture) main = alternatives.find((x) => x.aperture.exact === i.aperture!.exact) ?? widest;
     else if (fits.length) main = best(fits);
     else if (smallest.expose < lo) {
-      // Too bright for the look even at the smallest aperture: an ND filter lengthens the time.
-      // Choose the ND strength whose reciprocity-corrected time lands closest to the look's target time.
-      let bestNd = 1;
-      for (let n = 1; n <= 16; n++) {
-        const e = step(smallest.aperture, smallest.calculated * 2 ** n, film).expose;
-        const eb = step(smallest.aperture, smallest.calculated * 2 ** bestNd, film).expose;
-        if (Math.abs(Math.log(e / mid)) < Math.abs(Math.log(eb / mid))) bestNd = n;
-      }
-      ndStops = bestNd;
-      main = step(smallest.aperture, smallest.calculated * 2 ** ndStops, film);
-      notes.push(`Too bright for ${Math.round(lo)}s+ even at f/${smallest.aperture.nominal}: add a ${ndStops}-stop ND filter (the time below includes it), or load slower film.`);
+      // Brighter than this look needs even at the smallest aperture: use it; the exposure is just shorter.
+      main = smallest;
+      notes.push(`It's brighter than this look usually needs: even at f/${smallest.aperture.nominal} the exposure is only ${Math.round(smallest.expose * 10) / 10}s. Expect shorter trails, or use slower film or wait for darker light.`);
     } else if (widest.expose > hi) {
       main = widest;
       notes.push(`It's darker than this shot usually needs: even wide open the exposure runs past ${Math.round(hi)}s. Expect longer trails, or load faster film.`);
@@ -344,5 +334,5 @@ export function planBulb(i: BulbInputs): BulbPlan {
           ]
         : [];
 
-  return { shot, main, alternatives, bracket, ndStops, notes, starArcDegrees: starArc, starLimit };
+  return { shot, main, alternatives, bracket, notes, starArcDegrees: starArc, starLimit };
 }

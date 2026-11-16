@@ -1,7 +1,4 @@
-import { correctReciprocity, type ReciprocityResult } from './film';
-import { nearest, type Aperture, type ShutterSpeed } from './scale';
-import { slowestTimed } from './cameras';
-import type { CameraProfile, FilmStock } from './types';
+import type { Aperture } from './scale';
 import type { LuminanceGrid } from './measure';
 
 // --- Zone System -------------------------------------------------------------------------------------
@@ -62,60 +59,7 @@ export function zoneHistogram(grid: LuminanceGrid, frameEV: number, exposureEV: 
   return bins.map((b) => b / n);
 }
 
-// --- ND and long exposure ---------------------------------------------------------------------------
-
-export const ND_FILTERS = [
-  { name: 'ND2 · 0.3', stops: 1 },
-  { name: 'ND4 · 0.6', stops: 2 },
-  { name: 'ND8 · 0.9', stops: 3 },
-  { name: 'ND16 · 1.2', stops: 4 },
-  { name: 'ND32 · 1.5', stops: 5 },
-  { name: 'ND64 · 1.8', stops: 6 },
-  { name: 'ND128 · 2.1', stops: 7 },
-  { name: 'ND256 · 2.4', stops: 8 },
-  { name: 'ND1000 · 3.0', stops: Math.log2(1000) },
-  { name: 'ND32000 · 4.5', stops: Math.log2(32000) },
-];
-
-export interface LongExposurePlan {
-  base: number;
-  filterStops: number;
-  /** With filters, before reciprocity. */
-  calculated: number;
-  reciprocity?: ReciprocityResult;
-  /** What to actually expose. */
-  adjusted: number;
-  requiresBulb: boolean;
-  marked?: ShutterSpeed;
-  markedError?: number;
-}
-
-export function planLongExposure(base: number, filterStops: number, film: FilmStock | null, camera: CameraProfile | null): LongExposurePlan {
-  const calculated = base * 2 ** filterStops;
-  const reciprocity = film ? correctReciprocity(calculated, film.reciprocity) : undefined;
-  const adjusted = reciprocity?.corrected ?? calculated;
-  let requiresBulb = adjusted > 1;
-  let marked: ShutterSpeed | undefined;
-  let markedError: number | undefined;
-  if (camera) {
-    const best = nearest(camera.speeds, adjusted, (s) => s.exact);
-    if (best) {
-      const e = Math.log2(best.exact / adjusted);
-      if (Math.abs(e) <= 1 / 6) {
-        marked = best;
-        markedError = e;
-        requiresBulb = false;
-      } else {
-        requiresBulb = camera.bulb && adjusted > (slowestTimed(camera)?.exact ?? 0) * 0.9;
-        if (!requiresBulb) {
-          marked = best;
-          markedError = e;
-        }
-      }
-    }
-  }
-  return { base, filterStops, calculated, reciprocity, adjusted, requiresBulb, marked, markedError };
-}
+// --- Long exposure ---------------------------------------------------------------------------------
 
 export const equivalentSeconds = (seconds: number, from: Aperture, to: Aperture) => seconds * (to.exact / from.exact) ** 2;
 

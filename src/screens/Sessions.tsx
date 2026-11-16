@@ -171,7 +171,6 @@ function ReadingDetail({ r, onClose }: { r: Reading; onClose: () => void }) {
         <Row label="Metered" value={r.metered} />
         <Row label="Metering" value={`${r.meteringMode} · ${r.path}`} />
         <Row label="Compensation" value={r.compensation ? r.compensation.toFixed(2) : '0'} />
-        <Row label="Filter / close-up" value={r.filterStops ? `${r.filterStops.toFixed(2)} stops` : 'none'} />
         <Row label="Camera" value={r.cameraName} />
         <Row label="Lens" value={r.lens} />
         <Row label="Film" value={`${r.filmName} · ${r.filmFormat}`} />

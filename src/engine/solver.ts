@@ -74,7 +74,7 @@ export interface ExposureInputs {
   ev100: number;
   /** Stops; positive = more exposure. */
   compensation: number;
-  /** Light lost to filters (ND, colour), stops. */
+  /** Light lost to lens attachments, stops (unused by the app; kept for older saved readings). */
   filterStops: number;
   /** Light lost to extension / bellows, stops. */
   bellowsStops: number;
@@ -114,7 +114,7 @@ export interface ExposureOption {
 export const optionLabel = (o: ExposureOption) => `${apLabel(o.aperture)} · ${shutterLabel(o.shutter)}`;
 
 export type Warning =
-  | { kind: 'tooBright'; over: number; nd: number }
+  | { kind: 'tooBright'; over: number }
   | { kind: 'tooDark'; under: number }
   | { kind: 'tripod'; seconds: number }
   | { kind: 'bulb'; seconds: number }
@@ -123,7 +123,7 @@ export type Warning =
 export function warningText(w: Warning): string {
   switch (w.kind) {
     case 'tooBright':
-      return `Too bright for this camera: the closest setting is ${describeStops(w.over)}. Stop down, use a ${w.nd}-stop ND filter or load slower film.`;
+      return `Too bright for this camera: the closest setting is ${describeStops(w.over)}. Stop down or load slower film.`;
     case 'tooDark':
       return `Too dark for the camera's settings: the closest is ${describeStops(-w.under)}. Use Bulb, open up, or load faster film.`;
     case 'tripod':
@@ -279,7 +279,7 @@ export function solve(cfg: SolverConfig, inputs: ExposureInputs, locks: Locks, s
 
   const warnings: Warning[] = [];
   if (Math.abs(primary.error) > 0.5) {
-    warnings.push(primary.error > 0 ? { kind: 'tooBright', over: primary.error, nd: Math.ceil(primary.error) } : { kind: 'tooDark', under: -primary.error });
+    warnings.push(primary.error > 0 ? { kind: 'tooBright', over: primary.error } : { kind: 'tooDark', under: -primary.error });
   }
   if (primary.shutter.kind === 'bulb') warnings.push({ kind: 'bulb', seconds: primary.shutter.seconds });
   const pt = shutterSeconds(primary.shutter);

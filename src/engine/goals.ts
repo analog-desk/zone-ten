@@ -31,7 +31,7 @@ export const GOALS: { id: Goal; name: string; tagline: string }[] = [
   { id: 'landscape', name: 'Landscape', tagline: 'Depth of field and tonal range' },
   { id: 'street', name: 'Street', tagline: 'Hand-held, fast to adjust' },
   { id: 'astrophotography', name: 'Astrophotography', tagline: 'Wide open, star points or trails' },
-  { id: 'longExposure', name: 'Long Exposure', tagline: 'Bulb, ND filters, reciprocity' },
+  { id: 'longExposure', name: 'Long Exposure', tagline: 'Bulb timing and reciprocity' },
   { id: 'architecture', name: 'Architecture', tagline: 'Sharp, level, controlled' },
   { id: 'wildlife', name: 'Wildlife', tagline: 'Fast shutter for animals' },
   { id: 'sports', name: 'Sports & Action', tagline: 'Freeze peak action' },
@@ -53,7 +53,6 @@ export interface Guidance {
   bracket: number[];
   alternate?: { label: string; program: ProgramPrefs };
   starLimit?: number;
-  wantsAtLeast?: number;
 }
 
 export function guidance(goal: Goal | null | undefined, camera: CameraProfile, film: FilmStock | null, astroRule = 500): Guidance {
@@ -75,12 +74,11 @@ export function guidance(goal: Goal | null | undefined, camera: CameraProfile, f
           'Mount the camera on a tripod and use a cable release.',
           'Start the exposure just before traffic enters the frame. Longer exposures record longer, fuller trails.',
           'Moving lights barely change the overall reading — meter the scene, then lengthen time for more trails.',
-          'Slower film (or a lower EI) makes longer times possible; with fast film stop down or add an ND filter.',
+          'Slower film (or a lower EI) makes longer times possible; with fast film, stop down.',
           "Exposures beyond the camera's marked speeds use Bulb — the timer in Film Tools counts it for you.",
         ],
         tripod: true,
         bracket: [0, 1],
-        wantsAtLeast: 8,
       };
     case 'portraits':
       return {
@@ -148,15 +146,14 @@ export function guidance(goal: Goal | null | undefined, camera: CameraProfile, f
     case 'longExposure':
       return {
         program: { apertures: [8, 16], shutterRange: [15, 120], tripod: true, preferBulb: true },
-        headline: 'Stretch time — Bulb, ND and reciprocity',
+        headline: 'Stretch time — Bulb and reciprocity',
         tips: [
-          'Compose and focus before fitting a dark ND filter.',
+          'Use the smallest aperture and slowest film to stretch the time; dusk and night give the longest exposures.',
           'Cover the viewfinder eyepiece during long exposures to stop stray light reaching the film.',
           'Calculated and reciprocity-adjusted times are shown separately — expose for the adjusted time.',
         ],
         tripod: true,
         bracket: [0, 1],
-        wantsAtLeast: 15,
       };
     case 'architecture':
       return {
@@ -235,13 +232,12 @@ export function guidance(goal: Goal | null | undefined, camera: CameraProfile, f
         headline: 'Silky water with slow shutter',
         tips: [
           '½–2 s renders falling water as silk; 1/500 s or faster freezes droplets.',
-          'If the slowest time at your smallest aperture is too short, add an ND filter (suggested below).',
+          'Shade, overcast light or dusk lets you reach slower speeds at your smallest aperture.',
           'Meter the water and the rocks — white water needs about +1½ stops to stay white.',
         ],
         tripod: true,
         bracket: [0, 1],
         alternate: { label: 'Freeze water', program: { apertures: wideTo(8), minShutter: 1 / 500 } },
-        wantsAtLeast: 0.5,
       };
     case 'night':
       return {
@@ -264,7 +260,6 @@ export interface Creative {
   alternateLabel?: string;
   alternate?: ExposureOption;
   bracket: ExposureOption[];
-  nd?: { stops: number; option: ExposureOption };
   reciprocity?: ReciprocityResult;
   tips: string[];
   tripod: boolean;
@@ -281,7 +276,8 @@ export function creative(
   astroRule = 500,
 ): Creative {
   const g = guidance(goal, camera, film, astroRule);
-  const isoLock = { iso: true, aperture: false, shutter: false };
+  // Film: ISO is the roll's EI. Digital: ISO can change per shot, so the solver may choose it (lowest that works).
+  const isoLock = { iso: !camera.isoPerShot, aperture: false, shutter: false };
   const firstSpeed = sortedSpeeds(camera)[0];
   const seed = {
     iso: inputs.workingEI,
@@ -297,18 +293,14 @@ export function creative(
   for (const step of g.bracket) {
     const o = solve(cfg, { ...inputs, compensation: inputs.compensation + step }, { iso: true, aperture: true, shutter: false }, {
       ...seed,
+      iso: main.camera.iso,
       aperture: main.camera.aperture,
     }).camera;
     const adjusted = { ...o, error: o.error + step };
     if (!bracket.some((b) => shutterSeconds(b.shutter) === shutterSeconds(adjusted.shutter) && b.aperture.exact === adjusted.aperture.exact)) bracket.push(adjusted);
   }
 
-  let nd: Creative['nd'];
   const t = shutterSeconds(main.camera.shutter);
-  if (g.wantsAtLeast && t < g.wantsAtLeast * 0.7) {
-    const stops = Math.ceil(Math.log2(g.wantsAtLeast / t));
-    if (stops >= 1) nd = { stops, option: solve(cfg, { ...inputs, filterStops: inputs.filterStops + stops }, isoLock, seed).camera };
-  }
 
   return {
     headline: g.headline,
@@ -316,7 +308,6 @@ export function creative(
     alternateLabel: g.alternate?.label,
     alternate,
     bracket,
-    nd,
     reciprocity: film && t >= 1 ? correctReciprocity(t, film.reciprocity) : undefined,
     tips: g.tips,
     tripod: g.tripod,

@@ -39,7 +39,7 @@ export function BulbPlanner({
   camera,
   film,
   roll,
-  ei,
+  ei: filmEI,
   goal,
   goalLabel,
   astroRule,
@@ -63,6 +63,9 @@ export function BulbPlanner({
   const [duration, setDuration] = useState<number | undefined>(undefined);
   const [aperture, setAperture] = useState<Aperture | undefined>(undefined);
   const [saved, setSaved] = useState(false);
+  // Digital cameras: ISO is chosen here; film cameras use the roll's EI.
+  const [digitalISO, setDigitalISO] = useState(Math.min(camera.isoMax, Math.max(camera.isoMin, 800)));
+  const ei = camera.isoPerShot ? digitalISO : filmEI;
 
   // Optional meter reading (whatever the meter can manage, e.g. wide open at ISO 3200).
   const aps = sortedApertures(camera);
@@ -184,9 +187,23 @@ export function BulbPlanner({
         </Card>
       )}
 
+      {camera.isoPerShot && (
+        <Card className="py-3">
+          <Label>ISO on the {camera.name}</Label>
+          <div className="no-scrollbar mt-2 flex gap-1.5 overflow-x-auto">
+            {isoScale(1, camera.isoMin, camera.isoMax).map((v) => (
+              <Chip key={v} on={digitalISO === v} onClick={() => setDigitalISO(v)}>
+                {fmtISO(v)}
+              </Chip>
+            ))}
+          </div>
+          <p className="mt-1 text-xs text-dim">Higher ISO shortens the time (or lets you stop down) at the cost of noise.</p>
+        </Card>
+      )}
+
       <Card className="border-accent/60">
         <Label>
-          Set the {camera.name} to B · EI {fmtISO(ei)}
+          Set the {camera.name} to B · {camera.isoPerShot ? 'ISO' : 'EI'} {fmtISO(ei)}
         </Label>
         <div className="mt-2 flex items-end gap-5">
           <div>
@@ -198,7 +215,6 @@ export function BulbPlanner({
             <div className="font-display text-5xl font-semibold leading-none tnum">{fmtTime(m.expose)}</div>
           </div>
         </div>
-        {plan.ndStops > 0 && <p className="mt-2 text-sm text-caution">With a {plan.ndStops}-stop ND filter on the lens.</p>}
         {m.reciprocity && m.reciprocity.basis !== 'noCorrectionNeeded' && (
           <>
             <Row label="Light calls for" value={fmtTime(m.calculated)} />
@@ -261,7 +277,7 @@ export function BulbPlanner({
         </ul>
       </Card>
 
-      {!film && <Notice tone="warn">Load your film (chip at the top) so reciprocity is included.</Notice>}
+      {!film && !camera.isoPerShot && <Notice tone="warn">Load your film (chip at the top) so reciprocity is included.</Notice>}
 
       <Button
         className="w-full"
@@ -282,7 +298,7 @@ export function BulbPlanner({
               aperture: apLabel(m.aperture),
               shutter: `B · ${fmtTime(m.expose)}`,
               compensation: 0,
-              filterStops: plan.ndStops,
+              filterStops: 0,
               meteringMode: 'Bulb planner',
               path: source === 'meter' ? 'External light meter reading' : 'Typical scene brightness',
               calibrationName: '—',

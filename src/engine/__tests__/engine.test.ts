@@ -158,10 +158,8 @@ describe('solver', () => {
   it('compensation, filters and EI change exposure, not EV', () => {
     const base = E.solve({ camera: lx }, inputs(10, 400), E.locksFor('aperturePriority'), sel(lx, 400, 8, 1 / 60));
     const plus = E.solve({ camera: lx }, inputs(10, 400, { compensation: 1 }), E.locksFor('aperturePriority'), sel(lx, 400, 8, 1 / 60));
-    const nd = E.solve({ camera: lx }, inputs(10, 400, { filterStops: 3 }), E.locksFor('aperturePriority'), sel(lx, 400, 8, 1 / 60));
     const ei200 = E.solve({ camera: lx }, inputs(10, 200), E.locksFor('aperturePriority'), sel(lx, 200, 8, 1 / 60));
     close(plus.metered.seconds / base.metered.seconds, 2);
-    close(nd.metered.seconds / base.metered.seconds, 8);
     close(ei200.metered.seconds / base.metered.seconds, 2);
     expect(ei200.ev100).toBe(base.ev100);
   });
@@ -249,10 +247,6 @@ describe('creative recommendations', () => {
     const r = E.creative('lightTrails', lx, film('ilford-hp5-plus'), inputs(3, 400));
     expect(r.option.shutter.kind).toBe('bulb');
     expect(r.reciprocity!.corrected).toBeGreaterThan(E.shutterSeconds(r.option.shutter));
-  });
-  it('waterfall ND suggestion', () => {
-    const r = E.creative('waterfalls', E.canonAE1Program(), film('ilford-fp4-plus'), inputs(14, 125));
-    expect(r.nd!.stops).toBeGreaterThanOrEqual(4);
   });
   it('astro on Yashica', () => {
     const r = E.creative('astrophotography', E.yashicaA(), film('ilford-delta-3200'), inputs(-4, 3200));
@@ -458,15 +452,6 @@ describe('film tools', () => {
     expect(E.analyseContrast(8, 12).development).toBe('N+1');
     close(E.zoneHistogram(E.uniformGrid(0.18), 10, 8)[7]!, 1);
   });
-  it('long exposure plan separates calculated and adjusted', () => {
-    const p = E.planLongExposure(1 / 8, 10, film('ilford-hp5-plus'), E.pentaxLX());
-    close(p.calculated, 128);
-    close(p.adjusted, 128 ** 1.31, 1e-6);
-    expect(p.requiresBulb).toBe(true);
-    const q = E.planLongExposure(1 / 128, 3, film('ilford-hp5-plus'), E.pentaxLX());
-    expect(q.requiresBulb).toBe(false);
-    expect(E.speedLabel(q.marked!)).toBe('1/15');
-  });
   it('astro, bellows, equivalent time', () => {
     close(E.maxStarPointSeconds(50, 43.27)!, 10);
     close(E.bellowsStops(1), 2);
@@ -514,5 +499,27 @@ describe('meter state', () => {
     expect(sol.mode).toBe('manual');
     expect(sol.ev100).toBe(12);
     close(sol.user.error, rec.option.error);
+  });
+});
+
+describe('Fujifilm X-T5 profile', () => {
+  const x = E.fujiXT5();
+  it('has the X-T5 ranges and the 23mm f/2.8 lens', () => {
+    expect([x.isoMin, x.isoMax, x.isoPerShot, x.flashSync]).toEqual([125, 12800, true, 1 / 250]);
+    expect(E.sortedSpeeds(x)[0]!.nominal).toBeCloseTo(1 / 4000, 9);
+    expect(E.sortedSpeeds(x).at(-1)!.nominal).toBe(30);
+    expect(E.sortedSpeeds(x).length).toBe(52); // ⅓ stops 1/4000 … 30 s = 17 stops
+    expect(E.sortedApertures(x).map((a) => a.nominal)).toEqual([2.8, 3.2, 3.5, 4, 4.5, 5, 5.6, 6.3, 7.1, 8, 9, 10, 11, 13, 14, 16]);
+    expect(x.lens.focalLength).toBe(23);
+    expect(E.validateCamera(x)).toEqual([]);
+  });
+  it('suggestions choose ISO (lowest that works) and only X-T5 settings', () => {
+    const r = E.creative('portraits', x, null, inputs(9, 400));
+    expect(r.option.aperture.nominal).toBe(2.8);
+    expect(r.option.iso).toBeGreaterThanOrEqual(125);
+    expect(r.option.iso).toBeLessThanOrEqual(12800);
+    expect(x.speeds.some((s) => r.option.shutter.kind === 'timed' && s.exact === r.option.shutter.speed.exact)).toBe(true);
+    // Bright light: base ISO.
+    expect(E.creative('landscape', x, null, inputs(15, 400)).option.iso).toBe(125);
   });
 });
