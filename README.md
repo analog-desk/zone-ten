@@ -37,7 +37,7 @@ One-time setup: *Settings → Pages → Deploy from a branch → `gh-pages` / ro
 `EV₁₀₀ = log₂(f²/t) − log₂(ISO/100)` from your meter's values, then the engine's camera-aware solver picks the
 equivalent exposure that best fits the goal (aperture/shutter preferences, hand-holding limits, Bulb for long times)
 at your film's working EI. Goal suggestions never change the exposure itself, only which equivalent is chosen; any
-compensation or ND you add is shown explicitly.
+compensation you add is shown explicitly.
 
 ## Structure
 
